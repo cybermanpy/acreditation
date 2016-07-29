@@ -1,0 +1,172 @@
+@import "fonts.styl"
+@import "normalize.styl"
+
+gris_oscuro = #333333
+gris_claro = #818181
+rojo = #BD255B
+gris_mas_claro = #F0F0F0
+
+a
+	text-decoration none
+body
+	font-size 16px
+
+figure
+	margin 0
+img
+	vertical-align top
+.avatar
+	width 38px
+	height 38px
+.border-bottom
+	border-bottom 1px solid gris_claro
+.border-menu
+	color gris_claro
+	left .5em
+	margin-top -10px
+	position absolute
+	top 50%
+.center-block
+	margin 0 auto
+.center-text
+	text-align center
+.container
+	font-size 0
+	padding 1.4rem
+	text-align center
+.close-icon
+	position absolute
+	top .5em
+	color gris_claro
+	right .5em
+	font-size 1.2em
+.header
+	height 3.5em
+	.title
+		font-size 1.1em
+		text-align center
+.input
+	border 1px solid gris_claro
+	height 2.5em
+	border-radius 5px
+	padding 0 1em 0 2em
+.isotipo
+	width 122px
+.left
+	float left
+.logo
+	background white
+	padding 1.3em 0
+	display none
+	clearfix()
+.menu
+	display none
+.name
+	color gris_oscuro
+.padding
+	padding 1em
+.padding-tb
+	padding 1em 0
+.pictures
+	border-left 1px solid gris_claro
+	padding 0 2em
+	width 22em
+	display none
+	.list
+		list-style none
+	.item
+		padding 1em 0
+	.action
+		font-size .8em
+.relative
+	position relative
+.right
+	float right
+.right-text
+	text-align right
+.round
+	border-radius 50%
+	overflow hidden
+.search-icon
+	position absolute
+	left .5em
+	top .8em
+	color gris_claro
+.table
+	width 100%
+	height 20em
+.torneo
+	&.small
+		width 20em
+		margin 0 auto
+.title
+	text-transform uppercase
+.title-torneo
+	color gris_claro
+	position relative
+	top -15px
+	margin-left .5em
+	&:after
+		border-left 7px solid transparent
+		border-right 7px solid transparent
+		border-top 9px solid gris_claro
+		content ""
+			display inline-block
+			margin-left .4em
+.wrap
+	width 1000px
+
+@media screen and (min-width:480px)
+	.image
+		img
+			width 100%
+			height auto
+	.torneo
+		padding 3em
+		&.medium
+			width auto
+
+@media screen and (min-width:1000px)
+	body
+		background gris_mas_claro
+	.button-menu
+		display none
+	.header
+		height auto
+		border none
+		.title
+			display none
+	.pictures
+		display block
+	.logo
+		height 3.5em
+		display block
+	.menu
+		display block
+		background gris_mas_claro
+		overflow hidden
+		border-top 1px solid gris_claro
+		.item
+			float left
+			list-style none
+			a
+				color gris_oscuro
+				cursor pointer
+				display block
+				padding 1em
+				text-transform uppercase
+				border-top 5px solid transparent
+				transition .3s border-top
+				&:hover
+					border-top 5px solid gris_claro
+	.table-content
+		width 32.5em
+		float left
+		.description
+			display none
+	.torneo
+		padding-top 1.3em
+		&.large
+			margin 0 auto
+			width 62.5em
+			overflow hidden
