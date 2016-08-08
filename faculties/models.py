@@ -10,8 +10,11 @@ class Faculty(models.Model):
     fkuniversity = models.ForeignKey(University)
     fkcampus = models.ForeignKey(Campus)
 
+    # def __str__(self):
+    #     return '%s' %(self.name)
+
     def __str__(self):
-        return self.name
+        return '%s - %s' %(self.name, self.fkuniversity)
 
     class Meta:
         verbose_name = 'Faculty'
