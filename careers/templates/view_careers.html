@@ -10,6 +10,7 @@
     <table class="table table-condensed">
         <tbody>
         <tr class="warning">
+            <th>N°</th>
             <th>Carrera</th>
             <th>Institución</th>
             <th>Sede</th>
@@ -20,10 +21,11 @@
         </tr>
         {% for c in careers %}
             <tr class="{% cycle 'success' 'active' %}">
+                <td> {{ c.national }} </td>
                 <td> {{ c.name }} </td>
                 <td> {{ c.fkfaculty.fkuniversity }} </td>
                 <td> {{ c.fkfaculty.fkcampus }} </td>
-                <td> {{ c.fkfaculty }} </td>
+                <td> {{ c.fkfaculty.fkname }} </td>
                 <td> {{ c.fkresolution.number }} </td>
                 <td> {{ c.fkresolution.start_date }} </td>
                 <td> {{ c.fkresolution.end_date }} </td>

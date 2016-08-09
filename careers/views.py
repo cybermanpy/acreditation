@@ -8,8 +8,8 @@ from .models import Career
 # Create your views here.
 
 def viewCareers(request):
-    title = 'Carreras Acreditadas'
-    careers = Career.objects.all()
+    title = 'Carreras Acreditadas Modelo Nacional'
+    careers = Career.objects.all().order_by('national')
     template = loader.get_template('view_careers.html')
     context = {
         'careers': careers,
