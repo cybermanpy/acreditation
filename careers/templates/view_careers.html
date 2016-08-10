@@ -31,6 +31,38 @@
                 <td> {{ c.fkresolution.end_date }} </td>
             </tr>
         {% endfor%}
+       <!--  <tr>
+            <th colspan="8">
+                <div class="pagination">
+                <span class="setep-links">
+                    {% if careers.has_previous %}
+                        <a href="?page={{ careers.previous_page_number }}"><=</a>
+                    {% endif %}
+                    <span class="current">
+                        Pagina {{ careers.number }} de {{ careers.paginator.num_pages }}
+                    </span>
+                    {% if careers.has_next %}
+                        <a href="?page={{ careers.next_page_number }}">=></a>
+                    {% endif %}
+                </span>
+                </div>
+            </th>
+        </tr> -->
+        <tr>
+            <th>
+            <ul class="pagination"> 
+                {% if careers.has_previous %}
+                    <li><a href="?page={{ careers.previous_page_number }}">{{ careers.previous_page_number }}</a></li>
+                {% endif %}
+               <!--  <span class="current">
+                    Pagina {# { careers.number } #} de {# { careers.paginator.num_pages } #}
+                </span> -->
+                {% if careers.has_next %}
+                    <li><a href="?page={{ careers.next_page_number }}">{{ careers.next_page_number }}</a></li>
+                {% endif %}
+            </ul>
+            </th>
+        </tr>
         </tbody>
     </table>
 
