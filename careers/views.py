@@ -22,7 +22,7 @@ def viewCareers(request):
     title = 'Carreras Acreditadas Modelo Nacional'
     template = loader.get_template('view_careers.html')
     listCareer = Career.objects.all().order_by('national')
-    paginator = Paginator(listCareer, 5)
+    paginator = Paginator(listCareer, 10)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
