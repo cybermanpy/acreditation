@@ -5,5 +5,5 @@ from .models import Career
 
 @admin.register(Career)
 class AdminCareer(admin.ModelAdmin):
-    list_display = ('id', 'name', 'fkstatus', 'fkfaculty', 'fkresolution')
-    list_filter = ('fkfaculty', )
+    list_display = ('id', 'fknamecareer', 'fkstatus', 'fkfaculty', 'fkresolution')
+    list_filter = ('fknamecareer', )
