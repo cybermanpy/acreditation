@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Career
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from careers.forms import FormUniversity
 
 # Create your views here.
 
@@ -21,6 +22,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 def viewNational(request):
     title = 'Carreras de Grado Modelo Nacional'
     template = loader.get_template('view_careers.html')
+    form = FormUniversity()
     listCareer = Career.objects.all().order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
@@ -34,6 +36,7 @@ def viewNational(request):
     context = {
         'careers': careers,
         'title': title,
+        'form': form,
     }
     return HttpResponse(template.render(context, request))
 
