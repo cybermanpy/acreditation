@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^acreditation/views', views.viewCareers, name='careers'),
-    url(r'^acreditation/careers', views.viewForCareers, name='forCareers'),
+    url(r'^acreditation/model/national', views.viewNational, name='national'),
+    url(r'^acreditation/career', views.viewCareer, name='career'),
+    url(r'^acreditation/university', views.viewUniversity, name='university'),
 ]

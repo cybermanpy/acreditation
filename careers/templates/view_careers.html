@@ -21,7 +21,7 @@
         </tr>
         {% for c in careers %}
             <tr class="{% cycle 'success' 'active' %}">
-                <td> {{ c.national }} </td>
+                <td> {{ c.fkanmecareer|linenumbers }} </td>
                 <td> {{ c.fknamecareer }} </td>
                 <td> {{ c.fkfaculty.fkuniversity }} </td>
                 <td> {{ c.fkfaculty.fkcampus }} </td>

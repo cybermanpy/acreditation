@@ -11,7 +11,7 @@ class Resolution(models.Model):
     document = models.FileField(upload_to='resolutions/%Y_%m_%d/')
 
     def __str__(self):
-        return '%d' %(self.number)
+        return '(%d)-%s' %(self.number, self.start_date)
 
     class Meta:
         verbose_name = 'Resolution'
