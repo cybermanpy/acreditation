@@ -22,7 +22,26 @@ def viewCareers(request):
     title = 'Carreras Acreditadas Modelo Nacional'
     template = loader.get_template('view_careers.html')
     listCareer = Career.objects.all().order_by('national')
-    paginator = Paginator(listCareer, 5)
+    paginator = Paginator(listCareer, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        careers = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        careers = paginator.page(paginator.num_pages)
+    context = {
+        'careers': careers,
+        'title': title,
+    }
+    return HttpResponse(template.render(context, request))
+
+def viewForCareers(request):
+    title = 'Carreras Acreditadas por Carreras'
+    template = loader.get_template('view_careers.html')
+    listCareer = Career.objects.all().order_by('fknamecareer')
+    paginator = Paginator(listCareer, 10)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:

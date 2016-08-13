@@ -5,4 +5,4 @@ from .models import Name
 @admin.register(Name)
 class AdminName(admin.ModelAdmin):
 	list_display = ('id', 'name',)
-	list_fileter = ('name',)
+	list_filter = ('name',)

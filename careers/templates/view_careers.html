@@ -22,48 +22,32 @@
         {% for c in careers %}
             <tr class="{% cycle 'success' 'active' %}">
                 <td> {{ c.national }} </td>
-                <td> {{ c.name }} </td>
+                <td> {{ c.fknamecareer }} </td>
                 <td> {{ c.fkfaculty.fkuniversity }} </td>
                 <td> {{ c.fkfaculty.fkcampus }} </td>
                 <td> {{ c.fkfaculty.fkname }} </td>
                 <td> {{ c.fkresolution.number }} </td>
-                <td> {{ c.fkresolution.start_date }} </td>
-                <td> {{ c.fkresolution.end_date }} </td>
+                <td> {{ c.fkresolution.start_date|dateF1 }} </td>
+                <td> {{ c.fkresolution.end_date|dateF1 }} </td>
             </tr>
         {% endfor%}
-       <!--  <tr>
-            <th colspan="8">
-                <div class="pagination">
-                <span class="setep-links">
-                    {% if careers.has_previous %}
-                        <a href="?page={{ careers.previous_page_number }}"><=</a>
-                    {% endif %}
-                    <span class="current">
-                        Pagina {{ careers.number }} de {{ careers.paginator.num_pages }}
-                    </span>
-                    {% if careers.has_next %}
-                        <a href="?page={{ careers.next_page_number }}">=></a>
-                    {% endif %}
-                </span>
-                </div>
-            </th>
-        </tr> -->
-        <tr>
-            <th>
-            <ul class="pagination"> 
-                {% if careers.has_previous %}
-                    <li><a href="?page={{ careers.previous_page_number }}">{{ careers.previous_page_number }}</a></li>
-                {% endif %}
-               <!--  <span class="current">
-                    Pagina {# { careers.number } #} de {# { careers.paginator.num_pages } #}
-                </span> -->
-                {% if careers.has_next %}
-                    <li><a href="?page={{ careers.next_page_number }}">{{ careers.next_page_number }}</a></li>
-                {% endif %}
-            </ul>
-            </th>
-        </tr>
         </tbody>
     </table>
-
+    <ul class="pagination pagination-sm"> 
+        {% if careers.has_previous %}
+            <li><a href="?page={{ careers.previous_page_number }}">&laquo;</a></li>
+            <!-- <li><a href="?page={{ careers.previous_page_number }}">&larr;</a></li> -->
+        {% endif %}
+        {% for pg in careers.paginator.page_range %}
+            {% if careers.number == pg %}
+                <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+            {% else %}
+                <li><a href="?page={{ pg }}">{{pg}}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if careers.has_next %}
+            <li><a href="?page={{ careers.next_page_number }}">&raquo;</a></li>
+            <!-- <li><a href="?page={{ careers.next_page_number }}">&rarr;</a></li> -->
+        {% endif %}
+    </ul>
 {% endblock %}

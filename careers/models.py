@@ -5,11 +5,12 @@ from django.contrib.auth.models import User
 from faculties.models import Faculty
 from statuses.models import Status
 from resolutions.models import Resolution
+from namecareers.models import NameCareer
 
 # Create your models here.
 
 class Career(models.Model):
-    name = models.CharField(blank=False, max_length=100)
+    fknamecareer = models.ForeignKey(NameCareer)
     fkstatus = models.ForeignKey(Status)
     fkresolution = models.OneToOneField(Resolution)
     fkfaculty = models.ForeignKey(Faculty)
@@ -19,7 +20,7 @@ class Career(models.Model):
     university = models.IntegerField(blank=False)
 
     def __str__(self):
-        return self.name
+        return self.fknamecareer.description
 
     class Meta:
         verbose_name = 'Carrer'

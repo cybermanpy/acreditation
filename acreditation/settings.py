@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'campuses.apps.CampusesConfig',
     'careers.apps.CareersConfig',
     'faculties.apps.FacultiesConfig',
+    'namecareers.apps.NamecareersConfig',
     'names.apps.NamesConfig',
     'resolutions.apps.ResolutionsConfig',
     'statuses.apps.StatusesConfig',

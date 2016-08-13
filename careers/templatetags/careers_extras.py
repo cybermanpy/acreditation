@@ -25,7 +25,7 @@ def sub(value, arg):
 sub.is_safe = False
 
 def formatDate(arg):
-    format = ('%H:%M:%S')
+    format = ('%d/%m/%Y')
     arg = arg.strftime(format)
     return arg
 
