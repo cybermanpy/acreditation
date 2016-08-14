@@ -28,6 +28,11 @@ def formatDate(arg):
     arg = arg.strftime(format)
     return arg
 
+def formatDate1(arg):
+    format = ('%Y')
+    arg = arg.strftime(format)
+    return arg
+
 @register.filter
 def suma(value, arg):
     try:
@@ -56,6 +61,10 @@ def dateF(value, arg):
 @register.filter
 def dateF1(value):
     return formatDate(value)
+
+@register.filter
+def dateF2(value):
+    return formatDate1(value)
 
 @register.filter
 def total(value, arg):

@@ -17,8 +17,8 @@ def viewNational(request):
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
-            u = request.POST['text']
-            careers = Career.objects.filter(fkfaculty__fkuniversity__name__contains=u).order_by('national')
+            search = request.POST['text']
+            careers = Career.objects.filter(fkfaculty__fkuniversity__name__contains=search, fkstatus__description='Acreditada').order_by('national')
             context = {
                 'careers': careers,
                 'title': title,
@@ -29,7 +29,7 @@ def viewNational(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.all().order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
         page = int(request.GET.get('page', '1'))
@@ -56,8 +56,8 @@ def viewCareer(request):
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
-            c = request.POST['text']
-            careers = Career.objects.filter(fknamecareer__description__contains=c).order_by('fknamecareer__description')
+            search = request.POST['text']
+            careers = Career.objects.filter(fknamecareer__description__contains=search, fkstatus__description='Acreditada').order_by('fknamecareer__description')
             context = {
                 'careers': careers,
                 'title': title,
@@ -68,7 +68,7 @@ def viewCareer(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.all().order_by('fknamecareer__description')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('fknamecareer__description')
     paginator = Paginator(listCareer, 10)
     try:
         page = int(request.GET.get('page', '1'))
@@ -95,8 +95,8 @@ def viewUniversity(request):
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
-            u = request.POST['text']
-            careers = Career.objects.filter(fkfaculty__fkname__name__contains=u).order_by('fkfaculty__fkuniversity__name')
+            search = request.POST['text']
+            careers = Career.objects.filter(fkfaculty__fkname__name__contains=search, fkstatus__description='Acreditada').order_by('fkfaculty__fkuniversity__name')
             context = {
                 'careers': careers,
                 'title': title,
@@ -107,7 +107,7 @@ def viewUniversity(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.all().order_by('fkfaculty__fkuniversity__name')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('fkfaculty__fkuniversity__name')
     paginator = Paginator(listCareer, 10)
     try:
         page = int(request.GET.get('page', '1'))
@@ -125,6 +125,85 @@ def viewUniversity(request):
         'link': link,
     }
     return HttpResponse(template.render(context, request))
+
+def viewPostponed(request):
+    title = 'Carreras de Grado / Programas de postgrado postergados Modelo Nacional'
+    template = loader.get_template('view_postponed.html')
+    label = 'Universidad'
+    link = '/acreditation/postponed'
+    if request.method == 'POST':
+        form = FormSearch(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            careers = Career.objects.filter(fkfaculty__fkuniversity__name__contains=search, fkstatus__description='Postergada').order_by('national')
+            context = {
+                'careers': careers,
+                'title': title,
+                'form': form,
+                'label': label,
+                'link': link,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearch()
+    listCareer = Career.objects.filter(fkstatus__description='Postergada').order_by('national')
+    paginator = Paginator(listCareer, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        careers = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        careers = paginator.page(paginator.num_pages)
+    context = {
+        'careers': careers,
+        'title': title,
+        'form': form,
+        'label': label,
+        'link': link,
+    }
+    return HttpResponse(template.render(context, request))
+
+def viewNoReputable(request):
+    title = 'Carreras de Grado / Programas de postgrado no acreditadas Modelo Nacional'
+    template = loader.get_template('view_postponed.html')
+    label = 'Universidad'
+    link = '/acreditation/no-reputable'
+    if request.method == 'POST':
+        form = FormSearch(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            careers = Career.objects.filter(fkfaculty__fkuniversity__name__contains=search, fkstatus__description='No acreditada').order_by('national')
+            context = {
+                'careers': careers,
+                'title': title,
+                'form': form,
+                'label': label,
+                'link': link,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearch()
+    listCareer = Career.objects.filter(fkstatus__description='No acreditada').order_by('national')
+    paginator = Paginator(listCareer, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        careers = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        careers = paginator.page(paginator.num_pages)
+    context = {
+        'careers': careers,
+        'title': title,
+        'form': form,
+        'label': label,
+        'link': link,
+    }
+    return HttpResponse(template.render(context, request))
+
 
 # def viewNational(request):
 #     title = 'Carreras de Grado Modelo Nacional'
