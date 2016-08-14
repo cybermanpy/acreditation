@@ -14,7 +14,6 @@ def valid_numeric(arg):
 
 @register.filter
 def sub(value, arg):
-    """Subtracts the arg from the value."""
     try:
         return valid_numeric(value) - valid_numeric(arg)
     except (ValueError, TypeError):
@@ -31,7 +30,6 @@ def formatDate(arg):
 
 @register.filter
 def suma(value, arg):
-    """Sum the arg from the value."""
     try:
         return valid_numeric(value) + valid_numeric(arg)
     except (ValueError, TypeError):

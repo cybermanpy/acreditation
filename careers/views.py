@@ -14,6 +14,7 @@ def viewNational(request):
     template = loader.get_template('view_careers.html')
     label = 'Universidad'
     link = '/acreditation/model/national'
+    var = 0
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
@@ -35,6 +36,7 @@ def viewNational(request):
                 'form': form,
                 'label': label,
                 'link': link,
+                'var': var,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -54,7 +56,8 @@ def viewNational(request):
         'title': title,
         'form': form,
         'label': label,
-        'link': link
+        'link': link,
+        'var': var,
     }
     return HttpResponse(template.render(context, request))
 
@@ -152,7 +155,7 @@ def viewUniversity(request):
         'title': title,
         'form': form,
         'label': label,
-        'link': link
+        'link': link,
     }
     return HttpResponse(template.render(context, request))
 
