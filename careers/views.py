@@ -6,6 +6,12 @@ from django.template import loader
 from .models import Career
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from careers.forms import FormSearch
+# Librerias para requeridas para generar pdf
+from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
 
 # Create your views here.
 
@@ -204,6 +210,39 @@ def viewNoReputable(request):
     }
     return HttpResponse(template.render(context, request))
 
+def renderPdf(request):
+    print "Genero el PDF"
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        pagesize=letter,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=62,
+        bottomMargin=18,
+        )
+    careers = []
+    styles = getSampleStyleSheet()
+    header = Paragraph("Listado de Carreras Acreditadas Modelo Nacional", styles['Heading1'])
+    careers.append(header)
+    headings = ('Nro.', 'Carrera', 'Institución', 'Sede', 'Facultad', 'Resolución', 'Fecha', 'Periodo de Acreditación')
+    allCareers = [(c.national, c.fknamecareer, c.fkfaculty.fkuniversity, c.fkfaculty.fkcampus, c.fkfaculty.fkname, c.fkresolution.number, c.fkresolution.start_date, c.fkresolution.end_date) for c in Career.objects.filter(fkstatus__description='Acreditada').order_by('national')]
+    print allCareers
+
+    t = Table([headings] + allCareers)
+    t.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (8, -1), 1, colors.dodgerblue),
+            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.darkblue),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    careers.append(t)
+    doc.build(careers)
+    response.write(buff.getvalue())
+    buff.close()
+    return response
 
 # def viewNational(request):
 #     title = 'Carreras de Grado Modelo Nacional'

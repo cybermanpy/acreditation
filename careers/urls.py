@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^acreditation/university', views.viewUniversity, name='university'),
     url(r'^acreditation/postponed', views.viewPostponed, name='postponed'),
     url(r'^acreditation/no-reputable', views.viewNoReputable, name='noreputable'),
+    url(r'^acreditation/render-pdf', views.renderPdf, name='renderPdf'),
 ]
