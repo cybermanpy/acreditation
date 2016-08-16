@@ -9,7 +9,8 @@ from careers.forms import FormSearch
 # Librerias para requeridas para generar pdf
 from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY #TA_LEFT, TA_CENTER, 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 
@@ -219,11 +220,12 @@ def renderPdf(request):
         pagesize=letter,
         rightMargin=72,
         leftMargin=72,
-        topMargin=62,
-        bottomMargin=18,
+        topMargin=72,
+        bottomMargin=72,
         )
     careers = []
     styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name="ParagraphTitle", fontSize=8, alignment=TA_JUSTIFY, fontName="FreeSansBold"))
     header = Paragraph("Listado de Carreras Acreditadas Modelo Nacional", styles['Heading1'])
     careers.append(header)
     headings = ('Nro.', 'Carrera', 'Institución', 'Sede', 'Facultad', 'Resolución', 'Fecha', 'Periodo de Acreditación')
