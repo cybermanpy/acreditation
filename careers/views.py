@@ -12,7 +12,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, inch
+from reportlab.lib.pagesizes import letter, inch, landscape, portrait
 
 # Create your views here.
 
@@ -211,6 +211,78 @@ def viewNoReputable(request):
     }
     return HttpResponse(template.render(context, request))
 
+def renderPdf(request):
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+        pagesize=landscape(letter))
+    # Our container for 'Flowable' objects
+    elements = []
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    thead = styles["Normal"]
+    thead.alignment=TA_CENTER
+    tbody = styles["BodyText"]
+    tbody.alignment=TA_LEFT
+    styles.wordWrap = 'CJK'
+    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+
+    careers = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
+    elements.append(Paragraph('Carreras de Grado Acreditadas Modelo Nacional', styles['Heading1']))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append([
+        Paragraph(str('Nro.'), thead),
+        Paragraph(str('Carrera'), thead),
+        Paragraph(str('Institución'), thead),
+        Paragraph(str('Sede'), thead),
+        Paragraph(str('Facultad'), thead),
+        Paragraph(str('Resolución'), thead),
+        Paragraph(str('Fecha'), thead),
+        Paragraph(str('Periodo de Acreditación'), thead),
+        ])
+    for i, c in enumerate(careers):
+        # Add a row to the table
+        table_data.append([
+            Paragraph(str(c.national), tbody),
+            Paragraph(str(c.fknamecareer.description), tbody),
+            Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+            Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+            Paragraph(str(c.fkfaculty.fkname.name), tbody),
+            Paragraph(str(c.fkresolution.number), tbody),
+            Paragraph(str(c.fkresolution.start_date), tbody),
+            Paragraph(str(c.fkresolution.end_date), tbody),
+            ])
+    
+    # Create the table
+    career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+    # career_table.setStyle(TableStyle([
+    #     ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+    #     ('BOX', (0, 0), (-1, -1), 0.25, colors.black)
+    #     ]))
+
+    career_table.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    elements.append(career_table)
+    doc.build(elements)
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    response.write(buff.getvalue())
+    buff.close()
+    return response
+
+
 # def renderPdf(request):
 #     print "Genero el PDF"
 #     response = HttpResponse(content_type='aplication/pdf')
@@ -254,47 +326,85 @@ def viewNoReputable(request):
 #     return response
 
 
-def renderPdf(self):
-        response = HttpResponse(content_type='aplication/pdf')
-        response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
-        buff = BytesIO()
-        doc = SimpleDocTemplate(buff,
-                                rightMargin=72,
-                                leftMargin=72,
-                                topMargin=72,
-                                bottomMargin=72,
-                                pagesize=letter)
+# def renderPdf3(request):
+#         response = HttpResponse(content_type='aplication/pdf')
+#         response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
+#         buff = BytesIO()
+#         doc = SimpleDocTemplate(buff,
+#                                 rightMargin=72,
+#                                 leftMargin=72,
+#                                 topMargin=72,
+#                                 bottomMargin=72,
+#                                 pagesize=landscape(letter))
  
-        # Our container for 'Flowable' objects
-        elements = []
+#         # Our container for 'Flowable' objects
+#         elements = []
  
-        # A large collection of style sheets pre-made for us
-        styles = getSampleStyleSheet()
-        styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+#         # A large collection of style sheets pre-made for us
+#         styles = getSampleStyleSheet()
+#         # styles = styles["BodyText"]
+#         styles.wordWrap = 'CJK'
+#         styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
  
-        # Draw things on the PDF. Here's where the PDF generation happens.
-        # See the ReportLab documentation for the full list of functionality.
-        # users = User.objects.all()
-        careers = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
-        elements.append(Paragraph('Carreras Acreditadas', styles['Heading1']))
+#         # Draw things on the PDF. Here's where the PDF generation happens.
+#         # See the ReportLab documentation for the full list of functionality.
+#         # users = User.objects.all()
+#         careers = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
+#         elements.append(Paragraph('Carreras de Grado Acreditadas Modelo Nacional', styles['Heading1']))
  
-        # Need a place to store our table rows
-        table_data = []
-        table_data.append(['Carrera', 'Institución', 'Sede', 'Facultad'])
-        for i, u in enumerate(careers):
-            # Add a row to the table
-            table_data.append([u.fknamecareer, u.fkfaculty.fkuniversity, u.fkfaculty.fkcampus, u.fkfaculty.fkname])
-        # Create the table
-        user_table = Table(table_data, colWidths=[doc.width/4.0]*4)
-        user_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                                        ('BOX', (0, 0), (-1, -1), 0.25, colors.black)]))
-        elements.append(user_table)
-        doc.build(elements)
+#         # Need a place to store our table rows
+#         table_data = []
+#         table_data.append(['Carrera', 'Institución', 'Sede', 'Facultad', 'Resolución', 'Fecha', 'Periodo de Acreditación'])
+#         for i, c in enumerate(careers):
+#             # Add a row to the table
+#             table_data.append([c.fknamecareer.description, c.fkfaculty.fkuniversity.name, c.fkfaculty.fkcampus.name, c.fkfaculty.fkname.name, c.fkresolution.number, c.fkresolution.start_date, c.fkresolution.end_date])
+#         # Create the table
+#         career_table = Table(table_data, colWidths=[doc.width/7.0]*7)
+#         career_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+#                                         ('BOX', (0, 0), (-1, -1), 0.25, colors.black)]))
+#         elements.append(career_table)
+#         doc.build(elements)
  
-        # Get the value of the BytesIO buffer and write it to the response.
-        response.write(buff.getvalue())
-        buff.close()
-        return response
+#         # Get the value of the BytesIO buffer and write it to the response.
+#         response.write(buff.getvalue())
+#         buff.close()
+#         return response
+
+
+# def renderPdf1(request):
+#     doc = SimpleDocTemplate("carrerasAcreditadas.pdf", pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
+#     doc.pagesize = landscape(letter)
+#     elements = []
+#     careers = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
+#     data = []
+#     data.append(['Carrera', 'Institución', 'Sede', 'Facultad'])
+#     for i, c in enumerate(careers):
+#         # Add a row to the table
+#         data.append([c.fknamecareer.description, c.fkfaculty.fkuniversity.name, c.fkfaculty.fkcampus.name, c.fkfaculty.fkname.name])
+#     # style = TableStyle([
+#     #                     ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+#     #                     ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+
+#     style = TableStyle([
+#                         ('ALIGN', (1, 1), (-2, -2), 'RIGHT'),
+#                         ('TEXTCOLOR', (1, 1), (-2, -2), colors.red),
+#                         ('VALIGN', (0, 0), (0, -1), 'TOP'),
+#                         ('TEXTCOLOR', (0, 0), (0, -1), colors.blue),
+#                         ('ALIGN', (0, -1), (-1, -1), 'CENTER'),
+#                         ('VALIGN', (0, -1), (-1, -1), 'MIDDLE'),
+#                         ('TEXTCOLOR', (0, -1), (-1, -1), colors.green),
+#                         ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+#                         ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+#                         ])
+#     s = getSampleStyleSheet()
+#     s = s["BodyText"]
+#     s.wordWrap = 'CJK'
+#     data2 = [[Paragraph(cell, s) for cell in row] for row in data]
+#     t = Table(data2, colWidths=[doc.width/4.0]*4)
+#     t.setStyle(style)
+#     elements.append(style)
+#     doc.build(elements)
+
 # def viewNational(request):
 #     title = 'Carreras de Grado Modelo Nacional'
 #     template = loader.get_template('view_careers.html')
