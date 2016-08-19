@@ -11,10 +11,14 @@
     <form method="POST">
         {% csrf_token %}
         <div class="form-group row">
-            <label for="{{label}}" class="col-sm-2">Busqueda por {{label}}:</label>
+            <label for="{{label}}" class="col-sm-2">Busqueda por: </label>
             <div class="col-sm-10">
                 {% render_field form.text class="form-control" %}
                 {{ form.text.errors }}
+            </div>
+            <div class="radio-inline">
+                {% render_field form.options class="radio-inline" %}
+                {{ form.options.errors }}
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>

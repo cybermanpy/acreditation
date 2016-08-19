@@ -19,18 +19,23 @@ from reportlab.lib.pagesizes import letter, inch, landscape, portrait
 def viewNational(request):
     title = 'Carreras de Grado Modelo Nacional'
     template = loader.get_template('view_careers.html')
-    label = 'Universidad'
     link = '/acreditation/model/national'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
-            careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada').order_by('national')
+            options = request.POST['options']
+            if options == '1':
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada').order_by('fknamecareer__description')
+            elif options == '2':
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada').order_by('national')
+            elif options == '3':
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada').order_by('fkfaculty__fkuniversity__name')
+            # careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada').order_by('national')
             context = {
                 'careers': careers,
                 'title': title,
                 'form': form,
-                'label': label,
                 'link': link,
             }
             return HttpResponse(template.render(context, request))
@@ -39,18 +44,17 @@ def viewNational(request):
     listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
-        page = int(request.GET.get('page', '1'))
+       page = int(request.GET.get('page', '1'))
     except ValueError:
-        page = 1
+       page = 1
     try:
-        careers = paginator.page(page)
+       careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        careers = paginator.page(paginator.num_pages)
+       careers = paginator.page(paginator.num_pages)
     context = {
         'careers': careers,
         'title': title,
         'form': form,
-        'label': label,
         'link': link,
     }
     return HttpResponse(template.render(context, request))
@@ -78,13 +82,13 @@ def viewCareer(request):
     listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('fknamecareer__description')
     paginator = Paginator(listCareer, 10)
     try:
-        page = int(request.GET.get('page', '1'))
+       page = int(request.GET.get('page', '1'))
     except ValueError:
-        page = 1
+       page = 1
     try:
-        careers = paginator.page(page)
+       careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        careers = paginator.page(paginator.num_pages)
+       careers = paginator.page(paginator.num_pages)
     context = {
         'careers': careers,
         'title': title,
@@ -117,13 +121,13 @@ def viewUniversity(request):
     listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('fkfaculty__fkuniversity__name')
     paginator = Paginator(listCareer, 10)
     try:
-        page = int(request.GET.get('page', '1'))
+       page = int(request.GET.get('page', '1'))
     except ValueError:
-        page = 1
+       page = 1
     try:
-        careers = paginator.page(page)
+       careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        careers = paginator.page(paginator.num_pages)
+       careers = paginator.page(paginator.num_pages)
     context = {
         'careers': careers,
         'title': title,
@@ -156,13 +160,13 @@ def viewPostponed(request):
     listCareer = Career.objects.filter(fkstatus__description='Postergada').order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
-        page = int(request.GET.get('page', '1'))
+       page = int(request.GET.get('page', '1'))
     except ValueError:
-        page = 1
+       page = 1
     try:
-        careers = paginator.page(page)
+       careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        careers = paginator.page(paginator.num_pages)
+       careers = paginator.page(paginator.num_pages)
     context = {
         'careers': careers,
         'title': title,
@@ -195,13 +199,13 @@ def viewNoReputable(request):
     listCareer = Career.objects.filter(fkstatus__description='No acreditada').order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
-        page = int(request.GET.get('page', '1'))
+       page = int(request.GET.get('page', '1'))
     except ValueError:
-        page = 1
+       page = 1
     try:
-        careers = paginator.page(page)
+       careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        careers = paginator.page(paginator.num_pages)
+       careers = paginator.page(paginator.num_pages)
     context = {
         'careers': careers,
         'title': title,
