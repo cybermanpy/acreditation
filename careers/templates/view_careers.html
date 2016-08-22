@@ -11,7 +11,7 @@
     <form method="POST">
         {% csrf_token %}
         <div class="form-group row">
-            <label for="{{label}}" class="col-sm-2">Busqueda por: </label>
+            <label for="search" class="col-sm-2">Busqueda por: </label>
             <div class="col-sm-10">
                 {% render_field form.text class="form-control" %}
                 {{ form.text.errors }}
@@ -26,30 +26,32 @@
         <a href="{{link}}" class="btn btn-primary">Limpiar</a>
     </form>
 
-    <table class="table table-condensed">
-        <tbody>
-        <tr class="warning">
-            <th>Nro.</th>
-            <th>Carrera</th>
-            <th>Institución</th>
-            <th>Sede</th>
-            <th>Facultad</th>
-            <th>Resolución</th>
-            <th>Fecha</th>
-            <th>Periodo de Acreditación</th>
-        </tr>
-        {% for c in careers %}
-            <tr class="{% cycle 'success' 'active' %}">
-                <td> {{ c.national }} </td>
-                <td> {{ c.fknamecareer }} </td>
-                <td> {{ c.fkfaculty.fkuniversity }} </td>
-                <td> {{ c.fkfaculty.fkcampus }} </td>
-                <td> {{ c.fkfaculty.fkname }} </td>
-                <td> {{ c.fkresolution.number }} </td>
-                <td> {{ c.fkresolution.start_date|dateF1 }} </td>
-                <td> {{ c.fkresolution.end_date|dateF1 }} </td>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>Nro.</th>
+                <th>Carrera</th>
+                <th>Institución</th>
+                <th>Sede</th>
+                <th>Facultad</th>
+                <th>Resolución</th>
+                <th>Fecha</th>
+                <th>Periodo de Acreditación</th>
             </tr>
-        {% endfor%}
+        </thead>
+        <tbody>
+            {% for c in careers %}
+                <tr>
+                    <td> {{ c.national }} </td>
+                    <td> {{ c.fknamecareer }} </td>
+                    <td> {{ c.fkfaculty.fkuniversity }} </td>
+                    <td> {{ c.fkfaculty.fkcampus }} </td>
+                    <td> {{ c.fkfaculty.fkname }} </td>
+                    <td> {{ c.fkresolution.number }} </td>
+                    <td> {{ c.fkresolution.start_date|dateF1 }} </td>
+                    <td> {{ c.fkresolution.end_date|dateF1 }} </td>
+                </tr>
+            {% endfor%}
         </tbody>
     </table>
     <ul class="pagination pagination-sm"> 

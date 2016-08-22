@@ -5,21 +5,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=divice-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-	<!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
 	<title> {% block title %}  {% endblock %} </title>
 </head>
 <body>
 	<section class="container">
-		<header class="header relative border-bottom">
-			<div class="logo">
-				<!-- <div class="wrap center-block">
-					<figure class="image isotipo left">
-						<img src="{% static 'img/logoBlack.png' %}" alt="ANEAES">
-					</figure>
-				</div> -->
-				<div class="name center-text">
-					<h4 class="title-torneo">{{ title|upper }} </h4>
-				</div>
+		<header>
+			<div class="page-header">
+				<h4> {{ title|upper }} </h4>
 			</div>
 		</header>
 		{% block content %} {% endblock %}
