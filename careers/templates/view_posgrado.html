@@ -25,20 +25,24 @@
         <thead>
             <tr>
                 <th>Nro.</th>
-                <th>Universidades/Institutos Superiores</th>
-                <th>Carrera/Programa</th>
+                <th>Programa de Posgrado</th>
+                <th>Institución</th>
                 <th>Sede</th>
                 <th>Resolución</th>
+                <th>Fecha</th>
+                <th>Período de Acreditación</th>
             </tr>
         </thead>
         <tbody>
             {% for c in careers %}
                 <tr>
                     <td> {{ forloop.counter }} </td>
-                    <td> {{ c.fkfaculty.fkuniversity }} </td>
                     <td> {{ c.fknamecareer }} </td>
+                    <td> {{ c.fkfaculty.fkuniversity }} </td>
                     <td> {{ c.fkfaculty.fkcampus }} </td>
-                    <td> {{ c.fkresolution.number }} / {{ c.fkresolution.start_date|dateF2 }} </td>
+                    <td> {{ c.fkresolution.number }} </td>
+                    <td> {{ c.fkresolution.start_date|dateF1 }} </td>
+                    <td> {{ c.fkresolution.end_date|dateF1 }} </td>
                 </tr>
             {% endfor%}
         </tbody>

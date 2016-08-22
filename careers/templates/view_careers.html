@@ -42,7 +42,7 @@
         <tbody>
             {% for c in careers %}
                 <tr>
-                    <td> {{ c.national }} </td>
+                    <td> {{ forloop.counter }} </td>
                     <td> {{ c.fknamecareer }} </td>
                     <td> {{ c.fkfaculty.fkuniversity }} </td>
                     <td> {{ c.fkfaculty.fkcampus }} </td>

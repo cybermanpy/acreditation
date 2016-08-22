@@ -90,8 +90,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'acreditation',
         'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': '192.168.1.40',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
         'PORT': '5432'
     }
 }

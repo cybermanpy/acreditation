@@ -16,8 +16,8 @@ class Career(models.Model):
     fkfaculty = models.ForeignKey(Faculty)
     fkuser = models.ForeignKey(User)
     national = models.IntegerField(blank=False)
-    career = models.IntegerField(blank=False)
-    university = models.IntegerField(blank=False)
+    arcusur = models.BooleanField(blank=False, default=False)
+    posgrado = models.BooleanField(blank=False, default=False)
 
     def __str__(self):
         return self.fknamecareer.description

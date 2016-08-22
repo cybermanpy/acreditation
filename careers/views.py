@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from careers.forms import FormSearch
 # Librerias para requeridas para generar pdf
 from io import BytesIO
-from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
@@ -26,11 +26,11 @@ def viewNational(request):
             search = request.POST['text']
             options = request.POST['options']
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada').order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada').order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada').order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
             context = {
                 'careers': careers,
                 'title': title,
@@ -40,7 +40,7 @@ def viewNational(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -61,18 +61,18 @@ def viewNational(request):
 def viewPostponed(request):
     title = 'Carreras de Grado/Programas de postgrado postergados Modelo Nacional'
     template = loader.get_template('view_postponed.html')
-    link = '/acreditation/model/national'
+    link = '/acreditation/postergada'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             options = request.POST['options']
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada').order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada').order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada').order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
             context = {
                 'careers': careers,
                 'title': title,
@@ -82,7 +82,7 @@ def viewPostponed(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='Postergada').order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -103,18 +103,18 @@ def viewPostponed(request):
 def viewNoReputable(request):
     title = 'Carreras de Grado/Programas de postgrado no acreditadas Modelo Nacional'
     template = loader.get_template('view_postponed.html')
-    link = '/acreditation/model/national'
+    link = '/acreditation/no-acreditada'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             options = request.POST['options']
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada').order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada').order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada').order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
             context = {
                 'careers': careers,
                 'title': title,
@@ -124,7 +124,91 @@ def viewNoReputable(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='No acreditada').order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+    paginator = Paginator(listCareer, 10)
+    try:
+       page = int(request.GET.get('page', '1'))
+    except ValueError:
+       page = 1
+    try:
+       careers = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+       careers = paginator.page(paginator.num_pages)
+    context = {
+        'careers': careers,
+        'title': title,
+        'form': form,
+        'link': link,
+    }
+    return HttpResponse(template.render(context, request))
+
+def viewPosgrado(request):
+    title = 'Programas de postgrado acreditados'
+    template = loader.get_template('view_posgrado.html')
+    link = '/acreditation/posgrado'
+    if request.method == 'POST':
+        form = FormSearch(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            if options == '1':
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+            elif options == '2':
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+            elif options == '3':
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+            context = {
+                'careers': careers,
+                'title': title,
+                'form': form,
+                'link': link,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearch()
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+    paginator = Paginator(listCareer, 10)
+    try:
+       page = int(request.GET.get('page', '1'))
+    except ValueError:
+       page = 1
+    try:
+       careers = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+       careers = paginator.page(paginator.num_pages)
+    context = {
+        'careers': careers,
+        'title': title,
+        'form': form,
+        'link': link,
+    }
+    return HttpResponse(template.render(context, request))
+
+def viewArcusur(request):
+    title = 'Carreras de grado acreditados - Modelo Arcusur'
+    template = loader.get_template('view_careers.html')
+    link = '/acreditation/model/national'
+    if request.method == 'POST':
+        form = FormSearch(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            if options == '1':
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+            elif options == '2':
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+            elif options == '3':
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+            context = {
+                'careers': careers,
+                'title': title,
+                'form': form,
+                'link': link,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearch()
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -154,17 +238,23 @@ def renderPdf(request):
         pagesize=landscape(letter))
     # Our container for 'Flowable' objects
     elements = []
+    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+    im = Image(logo, 3*inch, 1*inch)
+
     # A large collection of style sheets pre-made for us
     styles = getSampleStyleSheet()
+    title = styles['Heading1']
+    title.alignment=TA_CENTER
     thead = styles["Normal"]
     thead.alignment=TA_CENTER
     tbody = styles["BodyText"]
     tbody.alignment=TA_LEFT
     styles.wordWrap = 'CJK'
     styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+    elements.append(im)
 
-    careers = Career.objects.filter(fkstatus__description='Acreditada').order_by('national')
-    elements.append(Paragraph('Carreras de Grado Acreditadas Modelo Nacional', styles['Heading1']))
+    careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    elements.append(Paragraph('Carreras de Grado Acreditadas Modelo Nacional', title))
 
     # Need a place to store our table rows
     table_data = []
