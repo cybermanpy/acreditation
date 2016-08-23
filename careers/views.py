@@ -20,6 +20,7 @@ def viewNational(request):
     title = 'Carreras de Grado Modelo Nacional'
     template = loader.get_template('view_careers.html')
     link = '/acreditation/model/national'
+    label = 'national'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
@@ -36,6 +37,9 @@ def viewNational(request):
                 'title': title,
                 'form': form,
                 'link': link,
+                'label': label,
+                'search': search,
+                'options': options,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -50,18 +54,24 @@ def viewNational(request):
        careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
        careers = paginator.page(paginator.num_pages)
+    options = "0"
+    search = "all"
     context = {
         'careers': careers,
         'title': title,
         'form': form,
         'link': link,
+        'label': label,
+        'search': search,
+        'options': options,
     }
     return HttpResponse(template.render(context, request))
 
 def viewPostponed(request):
     title = 'Carreras de Grado/Programas de postgrado postergados Modelo Nacional'
     template = loader.get_template('view_postponed.html')
-    link = '/acreditation/postergada'
+    link = '/acreditation/postponed'
+    label = 'postponed'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
@@ -78,6 +88,7 @@ def viewPostponed(request):
                 'title': title,
                 'form': form,
                 'link': link,
+                'label': label,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -97,13 +108,15 @@ def viewPostponed(request):
         'title': title,
         'form': form,
         'link': link,
+        'label': label,
     }
     return HttpResponse(template.render(context, request))
 
 def viewNoReputable(request):
     title = 'Carreras de Grado/Programas de postgrado no acreditadas Modelo Nacional'
     template = loader.get_template('view_postponed.html')
-    link = '/acreditation/no-acreditada'
+    link = '/acreditation/no-reputable'
+    label = 'no-postponed'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
@@ -120,6 +133,7 @@ def viewNoReputable(request):
                 'title': title,
                 'form': form,
                 'link': link,
+                'label': label,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -146,6 +160,7 @@ def viewPosgrado(request):
     title = 'Programas de postgrado acreditados'
     template = loader.get_template('view_posgrado.html')
     link = '/acreditation/posgrado'
+    label = 'posgrado'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
@@ -162,6 +177,7 @@ def viewPosgrado(request):
                 'title': title,
                 'form': form,
                 'link': link,
+                'label': label,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -181,13 +197,15 @@ def viewPosgrado(request):
         'title': title,
         'form': form,
         'link': link,
+        'label': label,
     }
     return HttpResponse(template.render(context, request))
 
 def viewArcusur(request):
     title = 'Carreras de grado acreditados - Modelo Arcusur'
     template = loader.get_template('view_careers.html')
-    link = '/acreditation/model/national'
+    link = '/acreditation/model/arcusur'
+    label = 'arcusur'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
@@ -204,6 +222,9 @@ def viewArcusur(request):
                 'title': title,
                 'form': form,
                 'link': link,
+                'label': label,
+                'search': search,
+                'options': options,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -218,11 +239,16 @@ def viewArcusur(request):
        careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
        careers = paginator.page(paginator.num_pages)
+    options = "0"
+    search = "all"
     context = {
         'careers': careers,
         'title': title,
         'form': form,
         'link': link,
+        'label': label,
+        'search': search,
+        'options': options,
     }
     return HttpResponse(template.render(context, request))
 
@@ -270,8 +296,9 @@ def renderPdf(request):
         ])
     for i, c in enumerate(careers):
         # Add a row to the table
+        i=i+1
         table_data.append([
-            Paragraph(str(c.national), tbody),
+            Paragraph(str(i), tbody),
             Paragraph(str(c.fknamecareer.description), tbody),
             Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
             Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
@@ -302,6 +329,180 @@ def renderPdf(request):
     response.write(buff.getvalue())
     buff.close()
     return response
+
+def pdfNational(request, search, options):
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadasModeloNacional.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+        pagesize=landscape(letter))
+    # Our container for 'Flowable' objects
+    elements = []
+    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+    im = Image(logo, 3*inch, 1*inch)
+
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    title = styles['Heading1']
+    title.alignment=TA_CENTER
+    thead = styles["Normal"]
+    thead.alignment=TA_CENTER
+    tbody = styles["BodyText"]
+    tbody.alignment=TA_LEFT
+    styles.wordWrap = 'CJK'
+    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+    elements.append(im)
+
+    if options == '0':
+        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '1':
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '2':
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '3':
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+
+    elements.append(Paragraph('Carreras Acreditadas - Modelo Nacional', title))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append([
+        Paragraph(str('Nro.'), thead),
+        Paragraph(str('Carrera'), thead),
+        Paragraph(str('Institución'), thead),
+        Paragraph(str('Sede'), thead),
+        Paragraph(str('Facultad'), thead),
+        Paragraph(str('Resolución'), thead),
+        Paragraph(str('Fecha'), thead),
+        Paragraph(str('Periodo de Acreditación'), thead),
+        ])
+    for i, c in enumerate(careers):
+        # Add a row to the table
+        i=i+1
+        table_data.append([
+            Paragraph(str(i), tbody),
+            Paragraph(str(c.fknamecareer.description), tbody),
+            Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+            Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+            Paragraph(str(c.fkfaculty.fkname.name), tbody),
+            Paragraph(str(c.fkresolution.number), tbody),
+            Paragraph(str(c.fkresolution.start_date), tbody),
+            Paragraph(str(c.fkresolution.end_date), tbody),
+            ])
+    
+    # Create the table
+    career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+
+    career_table.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    elements.append(career_table)
+    doc.build(elements)
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    response.write(buff.getvalue())
+    buff.close()
+    return response
+
+def pdfArcusur(request, search, options):
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadasModeloArcusur.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+        pagesize=landscape(letter))
+    # Our container for 'Flowable' objects
+    elements = []
+    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+    im = Image(logo, 3*inch, 1*inch)
+
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    title = styles['Heading1']
+    title.alignment=TA_CENTER
+    thead = styles["Normal"]
+    thead.alignment=TA_CENTER
+    tbody = styles["BodyText"]
+    tbody.alignment=TA_LEFT
+    styles.wordWrap = 'CJK'
+    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+    elements.append(im)
+
+    if options == '0':
+        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+    elif options == '1':
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+    elif options == '2':
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+    elif options == '3':
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+
+    elements.append(Paragraph('Carreras Acreditadas - Modelo ARCU-SUR', title))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append([
+        Paragraph(str('Nro.'), thead),
+        Paragraph(str('Carrera'), thead),
+        Paragraph(str('Institución'), thead),
+        Paragraph(str('Sede'), thead),
+        Paragraph(str('Facultad'), thead),
+        Paragraph(str('Resolución'), thead),
+        Paragraph(str('Fecha'), thead),
+        Paragraph(str('Periodo de Acreditación'), thead),
+        ])
+    for i, c in enumerate(careers):
+        # Add a row to the table
+        i=i+1
+        table_data.append([
+            Paragraph(str(i), tbody),
+            Paragraph(str(c.fknamecareer.description), tbody),
+            Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+            Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+            Paragraph(str(c.fkfaculty.fkname.name), tbody),
+            Paragraph(str(c.fkresolution.number), tbody),
+            Paragraph(str(c.fkresolution.start_date), tbody),
+            Paragraph(str(c.fkresolution.end_date), tbody),
+            ])
+    
+    # Create the table
+    career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+
+    career_table.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    elements.append(career_table)
+    doc.build(elements)
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    response.write(buff.getvalue())
+    buff.close()
+    return response
+
+# def render(request, search, options):
+#     title = 'test PDF'
+#     template = loader.get_template('view_test.html')
+#     context = {
+#         'title': title,
+#         'search': search,
+#         'options': options,
+#     }
+#     return HttpResponse(template.render(context, request))
 
 # def viewCareer(request):
 #     title = 'Carreras de Grado Acreditadas por Carreras'

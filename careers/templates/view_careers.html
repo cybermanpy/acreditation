@@ -22,7 +22,12 @@
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
-        <a href="/acreditation/render-pdf" class="btn btn-primary">Generar PDF</a>
+        {% if label == 'national' %}
+            <a href="{% url 'careers.views.pdfNational'  search options %}" class="btn btn-primary">Generar PDF</a>
+        {% endif %}
+        {% if label == 'arcusur' %}
+            <a href="{% url 'careers.views.pdfArcusur'  search options %}" class="btn btn-primary">Generar PDF</a>
+        {% endif %}
         <a href="{{link}}" class="btn btn-primary">Limpiar</a>
     </form>
 
