@@ -23,12 +23,13 @@
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
         {% if label == 'national' %}
-            <a href="{% url 'careers.views.pdfNational'  search options %}" class="btn btn-primary">Generar PDF</a>
+            <a href="{% url 'careers.views.pdfNational' %}" class="btn btn-primary">Generar Pdf</a>
+            <a href="{% url 'careers.views.cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
         {% if label == 'arcusur' %}
-            <a href="{% url 'careers.views.pdfArcusur'  search options %}" class="btn btn-primary">Generar PDF</a>
+            <a href="{% url 'careers.views.pdfArcusur' %}" class="btn btn-primary">Generar Pdf</a>
+            <a href="{% url 'careers.views.cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
-        <a href="{{link}}" class="btn btn-primary">Limpiar</a>
     </form>
 
     <table class="table table-condensed table-striped">

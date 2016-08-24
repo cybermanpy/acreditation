@@ -25,10 +25,7 @@ SECRET_KEY = '3nj(cs6hmej791vzd^c^9(j!7%k7kjd89f+@3irn)=*ug$$gtb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'acreditation.aneaes.gov.py',
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

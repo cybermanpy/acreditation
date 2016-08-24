@@ -6,6 +6,8 @@ from django.template import loader
 from .models import Career
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from careers.forms import FormSearch
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect
 # Librerias para requeridas para generar pdf
 from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table, Image
@@ -19,13 +21,14 @@ from reportlab.lib.pagesizes import letter, inch, landscape, portrait
 def viewNational(request):
     title = 'Carreras de Grado Modelo Nacional'
     template = loader.get_template('view_careers.html')
-    link = '/acreditation/model/national'
     label = 'national'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
             if options == '1':
                 careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
             elif options == '2':
@@ -36,10 +39,7 @@ def viewNational(request):
                 'careers': careers,
                 'title': title,
                 'form': form,
-                'link': link,
                 'label': label,
-                'search': search,
-                'options': options,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -54,29 +54,25 @@ def viewNational(request):
        careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
        careers = paginator.page(paginator.num_pages)
-    options = "0"
-    search = "all"
     context = {
         'careers': careers,
         'title': title,
         'form': form,
-        'link': link,
         'label': label,
-        'search': search,
-        'options': options,
     }
     return HttpResponse(template.render(context, request))
 
 def viewPostponed(request):
-    title = 'Carreras de Grado/Programas de postgrado postergados Modelo Nacional'
+    title = 'Carreras de Grado/Programas de posgrado postergados Modelo Nacional'
     template = loader.get_template('view_postponed.html')
-    link = '/acreditation/postponed'
     label = 'postponed'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
             if options == '1':
                 careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
             elif options == '2':
@@ -87,7 +83,6 @@ def viewPostponed(request):
                 'careers': careers,
                 'title': title,
                 'form': form,
-                'link': link,
                 'label': label,
             }
             return HttpResponse(template.render(context, request))
@@ -107,7 +102,6 @@ def viewPostponed(request):
         'careers': careers,
         'title': title,
         'form': form,
-        'link': link,
         'label': label,
     }
     return HttpResponse(template.render(context, request))
@@ -115,13 +109,14 @@ def viewPostponed(request):
 def viewNoReputable(request):
     title = 'Carreras de Grado/Programas de postgrado no acreditadas Modelo Nacional'
     template = loader.get_template('view_postponed.html')
-    link = '/acreditation/no-reputable'
-    label = 'no-postponed'
+    label = 'noreputable'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
             if options == '1':
                 careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
             elif options == '2':
@@ -132,7 +127,6 @@ def viewNoReputable(request):
                 'careers': careers,
                 'title': title,
                 'form': form,
-                'link': link,
                 'label': label,
             }
             return HttpResponse(template.render(context, request))
@@ -152,7 +146,7 @@ def viewNoReputable(request):
         'careers': careers,
         'title': title,
         'form': form,
-        'link': link,
+        'label': label,
     }
     return HttpResponse(template.render(context, request))
 
@@ -204,13 +198,14 @@ def viewPosgrado(request):
 def viewArcusur(request):
     title = 'Carreras de grado acreditados - Modelo Arcusur'
     template = loader.get_template('view_careers.html')
-    link = '/acreditation/model/arcusur'
     label = 'arcusur'
     if request.method == 'POST':
         form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
             if options == '1':
                 careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
             elif options == '2':
@@ -221,10 +216,7 @@ def viewArcusur(request):
                 'careers': careers,
                 'title': title,
                 'form': form,
-                'link': link,
                 'label': label,
-                'search': search,
-                'options': options,
             }
             return HttpResponse(template.render(context, request))
     else:
@@ -239,98 +231,30 @@ def viewArcusur(request):
        careers = paginator.page(page)
     except (EmptyPage, InvalidPage):
        careers = paginator.page(paginator.num_pages)
-    options = "0"
-    search = "all"
     context = {
         'careers': careers,
         'title': title,
         'form': form,
-        'link': link,
         'label': label,
-        'search': search,
-        'options': options,
     }
     return HttpResponse(template.render(context, request))
 
-def renderPdf(request):
-    response = HttpResponse(content_type='aplication/pdf')
-    response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
-    buff = BytesIO()
-    doc = SimpleDocTemplate(buff,
-        rightMargin=72,
-        leftMargin=72,
-        topMargin=72,
-        bottomMargin=72,
-        pagesize=landscape(letter))
-    # Our container for 'Flowable' objects
-    elements = []
-    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
-    im = Image(logo, 3*inch, 1*inch)
-
-    # A large collection of style sheets pre-made for us
-    styles = getSampleStyleSheet()
-    title = styles['Heading1']
-    title.alignment=TA_CENTER
-    thead = styles["Normal"]
-    thead.alignment=TA_CENTER
-    tbody = styles["BodyText"]
-    tbody.alignment=TA_LEFT
-    styles.wordWrap = 'CJK'
-    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
-    elements.append(im)
-
-    careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
-    elements.append(Paragraph('Carreras de Grado Acreditadas Modelo Nacional', title))
-
-    # Need a place to store our table rows
-    table_data = []
-    table_data.append([
-        Paragraph(str('Nro.'), thead),
-        Paragraph(str('Carrera'), thead),
-        Paragraph(str('Institución'), thead),
-        Paragraph(str('Sede'), thead),
-        Paragraph(str('Facultad'), thead),
-        Paragraph(str('Resolución'), thead),
-        Paragraph(str('Fecha'), thead),
-        Paragraph(str('Periodo de Acreditación'), thead),
-        ])
-    for i, c in enumerate(careers):
-        # Add a row to the table
-        i=i+1
-        table_data.append([
-            Paragraph(str(i), tbody),
-            Paragraph(str(c.fknamecareer.description), tbody),
-            Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
-            Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
-            Paragraph(str(c.fkfaculty.fkname.name), tbody),
-            Paragraph(str(c.fkresolution.number), tbody),
-            Paragraph(str(c.fkresolution.start_date), tbody),
-            Paragraph(str(c.fkresolution.end_date), tbody),
-            ])
+def cleanner(request, link):
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if link == 'national':
+        return redirect('/acreditation/model/national')
+    elif link == 'arcusur':
+        return redirect('/acreditation/model/arcusur')
+    elif link == 'postponed':
+        return redirect('/acreditation/postponed')
+    elif link == 'noreputable':
+        return redirect('/acreditation/no-reputable')
     
-    # Create the table
-    career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
-    # career_table.setStyle(TableStyle([
-    #     ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-    #     ('BOX', (0, 0), (-1, -1), 0.25, colors.black)
-    #     ]))
 
-    career_table.setStyle(TableStyle(
-        [
-            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
-            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
-        ]
-    ))
-    elements.append(career_table)
-    doc.build(elements)
-
-    # Get the value of the BytesIO buffer and write it to the response.
-    response.write(buff.getvalue())
-    buff.close()
-    return response
-
-def pdfNational(request, search, options):
+def pdfNational(request):
+    search = request.session['s_text']
+    options = request.session['s_options']
     response = HttpResponse(content_type='aplication/pdf')
     response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadasModeloNacional.pdf"'
     buff = BytesIO()
@@ -357,7 +281,7 @@ def pdfNational(request, search, options):
     styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
     elements.append(im)
 
-    if options == '0':
+    if options == '':
         careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
     elif options == '1':
         careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
@@ -412,7 +336,9 @@ def pdfNational(request, search, options):
     buff.close()
     return response
 
-def pdfArcusur(request, search, options):
+def pdfArcusur(request):
+    search = request.session['s_text']
+    options = request.session['s_options']
     response = HttpResponse(content_type='aplication/pdf')
     response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadasModeloArcusur.pdf"'
     buff = BytesIO()
@@ -439,7 +365,7 @@ def pdfArcusur(request, search, options):
     styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
     elements.append(im)
 
-    if options == '0':
+    if options == '':
         careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
     elif options == '1':
         careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
@@ -493,6 +419,406 @@ def pdfArcusur(request, search, options):
     response.write(buff.getvalue())
     buff.close()
     return response
+
+def pdfPostponed(request):
+    search = request.session['s_text']
+    options = request.session['s_options']
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasPostergadas.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+        pagesize=landscape(letter))
+    # Our container for 'Flowable' objects
+    elements = []
+    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+    im = Image(logo, 3*inch, 1*inch)
+
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    title = styles['Heading1']
+    title.alignment=TA_CENTER
+    thead = styles["Normal"]
+    thead.alignment=TA_CENTER
+    tbody = styles["BodyText"]
+    tbody.alignment=TA_LEFT
+    styles.wordWrap = 'CJK'
+    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+    elements.append(im)
+
+    if options == '':
+        careers = Career.objects.filter(fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '1':
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '2':
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '3':
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+
+    elements.append(Paragraph('Carreras Postergadas - Modelo Nacional', title))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append([
+        Paragraph(str('Nro.'), thead),
+        Paragraph(str('Universidad/Institutos Superiores'), thead),
+        Paragraph(str('Carrera/Programa'), thead),
+        Paragraph(str('Sede'), thead),
+        Paragraph(str('Resolución'), thead),
+        ])
+    for i, c in enumerate(careers):
+        # Add a row to the table
+        i=i+1
+        table_data.append([
+            Paragraph(str(i), tbody),
+            Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+            Paragraph(str(c.fknamecareer.description), tbody),
+            Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+            Paragraph(str(c.fkresolution.number), tbody),
+            ])
+    
+    # Create the table
+    career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+
+    career_table.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    elements.append(career_table)
+    doc.build(elements)
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    response.write(buff.getvalue())
+    buff.close()
+    return response
+
+def pdfNoReputable(request):
+    search = request.session['s_text']
+    options = request.session['s_options']
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasNoAcreditadas.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+        pagesize=landscape(letter))
+    # Our container for 'Flowable' objects
+    elements = []
+    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+    im = Image(logo, 3*inch, 1*inch)
+
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    title = styles['Heading1']
+    title.alignment=TA_CENTER
+    thead = styles["Normal"]
+    thead.alignment=TA_CENTER
+    tbody = styles["BodyText"]
+    tbody.alignment=TA_LEFT
+    styles.wordWrap = 'CJK'
+    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+    elements.append(im)
+
+    if options == '':
+        careers = Career.objects.filter(fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '1':
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '2':
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+    elif options == '3':
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+
+    elements.append(Paragraph('Carreras No Acreditadas - Modelo Nacional', title))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append([
+        Paragraph(str('Nro.'), thead),
+        Paragraph(str('Universidad/Institutos Superiores'), thead),
+        Paragraph(str('Carrera/Programa'), thead),
+        Paragraph(str('Sede'), thead),
+        Paragraph(str('Resolución'), thead),
+        ])
+    for i, c in enumerate(careers):
+        # Add a row to the table
+        i=i+1
+        table_data.append([
+            Paragraph(str(i), tbody),
+            Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+            Paragraph(str(c.fknamecareer.description), tbody),
+            Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+            Paragraph(str(c.fkresolution.number), tbody),
+            ])
+    
+    # Create the table
+    career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+
+    career_table.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    elements.append(career_table)
+    doc.build(elements)
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    response.write(buff.getvalue())
+    buff.close()
+    return response
+
+# def renderPdf(request):
+#     response = HttpResponse(content_type='aplication/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
+#     buff = BytesIO()
+#     doc = SimpleDocTemplate(buff,
+#         rightMargin=72,
+#         leftMargin=72,
+#         topMargin=72,
+#         bottomMargin=72,
+#         pagesize=landscape(letter))
+#     # Our container for 'Flowable' objects
+#     elements = []
+#     logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+#     im = Image(logo, 3*inch, 1*inch)
+
+#     # A large collection of style sheets pre-made for us
+#     styles = getSampleStyleSheet()
+#     title = styles['Heading1']
+#     title.alignment=TA_CENTER
+#     thead = styles["Normal"]
+#     thead.alignment=TA_CENTER
+#     tbody = styles["BodyText"]
+#     tbody.alignment=TA_LEFT
+#     styles.wordWrap = 'CJK'
+#     styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+#     elements.append(im)
+
+#     careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+#     elements.append(Paragraph('Carreras de Grado Acreditadas Modelo Nacional', title))
+
+#     # Need a place to store our table rows
+#     table_data = []
+#     table_data.append([
+#         Paragraph(str('Nro.'), thead),
+#         Paragraph(str('Carrera'), thead),
+#         Paragraph(str('Institución'), thead),
+#         Paragraph(str('Sede'), thead),
+#         Paragraph(str('Facultad'), thead),
+#         Paragraph(str('Resolución'), thead),
+#         Paragraph(str('Fecha'), thead),
+#         Paragraph(str('Periodo de Acreditación'), thead),
+#         ])
+#     for i, c in enumerate(careers):
+#         # Add a row to the table
+#         i=i+1
+#         table_data.append([
+#             Paragraph(str(i), tbody),
+#             Paragraph(str(c.fknamecareer.description), tbody),
+#             Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+#             Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+#             Paragraph(str(c.fkfaculty.fkname.name), tbody),
+#             Paragraph(str(c.fkresolution.number), tbody),
+#             Paragraph(str(c.fkresolution.start_date), tbody),
+#             Paragraph(str(c.fkresolution.end_date), tbody),
+#             ])
+    
+#     # Create the table
+#     career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+#     # career_table.setStyle(TableStyle([
+#     #     ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+#     #     ('BOX', (0, 0), (-1, -1), 0.25, colors.black)
+#     #     ]))
+
+#     career_table.setStyle(TableStyle(
+#         [
+#             ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+#             ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+#             ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+#         ]
+#     ))
+#     elements.append(career_table)
+#     doc.build(elements)
+
+#     # Get the value of the BytesIO buffer and write it to the response.
+#     response.write(buff.getvalue())
+#     buff.close()
+#     return response
+
+
+
+# def pdfNational(request, search, options):
+#     response = HttpResponse(content_type='aplication/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadasModeloNacional.pdf"'
+#     buff = BytesIO()
+#     doc = SimpleDocTemplate(buff,
+#         rightMargin=72,
+#         leftMargin=72,
+#         topMargin=72,
+#         bottomMargin=72,
+#         pagesize=landscape(letter))
+#     # Our container for 'Flowable' objects
+#     elements = []
+#     logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+#     im = Image(logo, 3*inch, 1*inch)
+
+#     # A large collection of style sheets pre-made for us
+#     styles = getSampleStyleSheet()
+#     title = styles['Heading1']
+#     title.alignment=TA_CENTER
+#     thead = styles["Normal"]
+#     thead.alignment=TA_CENTER
+#     tbody = styles["BodyText"]
+#     tbody.alignment=TA_LEFT
+#     styles.wordWrap = 'CJK'
+#     styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+#     elements.append(im)
+
+#     if options == '0':
+#         careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+#     elif options == '1':
+#         careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+#     elif options == '2':
+#         careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+#     elif options == '3':
+#         careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+
+#     elements.append(Paragraph('Carreras Acreditadas - Modelo Nacional', title))
+
+#     # Need a place to store our table rows
+#     table_data = []
+#     table_data.append([
+#         Paragraph(str('Nro.'), thead),
+#         Paragraph(str('Carrera'), thead),
+#         Paragraph(str('Institución'), thead),
+#         Paragraph(str('Sede'), thead),
+#         Paragraph(str('Facultad'), thead),
+#         Paragraph(str('Resolución'), thead),
+#         Paragraph(str('Fecha'), thead),
+#         Paragraph(str('Periodo de Acreditación'), thead),
+#         ])
+#     for i, c in enumerate(careers):
+#         # Add a row to the table
+#         i=i+1
+#         table_data.append([
+#             Paragraph(str(i), tbody),
+#             Paragraph(str(c.fknamecareer.description), tbody),
+#             Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+#             Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+#             Paragraph(str(c.fkfaculty.fkname.name), tbody),
+#             Paragraph(str(c.fkresolution.number), tbody),
+#             Paragraph(str(c.fkresolution.start_date), tbody),
+#             Paragraph(str(c.fkresolution.end_date), tbody),
+#             ])
+    
+#     # Create the table
+#     career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+
+#     career_table.setStyle(TableStyle(
+#         [
+#             ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+#             ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+#             ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+#         ]
+#     ))
+#     elements.append(career_table)
+#     doc.build(elements)
+
+#     # Get the value of the BytesIO buffer and write it to the response.
+#     response.write(buff.getvalue())
+#     buff.close()
+#     return response
+
+# def pdfArcusur(request, search, options):
+#     response = HttpResponse(content_type='aplication/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadasModeloArcusur.pdf"'
+#     buff = BytesIO()
+#     doc = SimpleDocTemplate(buff,
+#         rightMargin=72,
+#         leftMargin=72,
+#         topMargin=72,
+#         bottomMargin=72,
+#         pagesize=landscape(letter))
+#     # Our container for 'Flowable' objects
+#     elements = []
+#     logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+#     im = Image(logo, 3*inch, 1*inch)
+
+#     # A large collection of style sheets pre-made for us
+#     styles = getSampleStyleSheet()
+#     title = styles['Heading1']
+#     title.alignment=TA_CENTER
+#     thead = styles["Normal"]
+#     thead.alignment=TA_CENTER
+#     tbody = styles["BodyText"]
+#     tbody.alignment=TA_LEFT
+#     styles.wordWrap = 'CJK'
+#     styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+#     elements.append(im)
+
+#     if options == '0':
+#         careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+#     elif options == '1':
+#         careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+#     elif options == '2':
+#         careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+#     elif options == '3':
+#         careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+
+#     elements.append(Paragraph('Carreras Acreditadas - Modelo ARCU-SUR', title))
+
+#     # Need a place to store our table rows
+#     table_data = []
+#     table_data.append([
+#         Paragraph(str('Nro.'), thead),
+#         Paragraph(str('Carrera'), thead),
+#         Paragraph(str('Institución'), thead),
+#         Paragraph(str('Sede'), thead),
+#         Paragraph(str('Facultad'), thead),
+#         Paragraph(str('Resolución'), thead),
+#         Paragraph(str('Fecha'), thead),
+#         Paragraph(str('Periodo de Acreditación'), thead),
+#         ])
+#     for i, c in enumerate(careers):
+#         # Add a row to the table
+#         i=i+1
+#         table_data.append([
+#             Paragraph(str(i), tbody),
+#             Paragraph(str(c.fknamecareer.description), tbody),
+#             Paragraph(str(c.fkfaculty.fkuniversity.name), tbody),
+#             Paragraph(str(c.fkfaculty.fkcampus.name), tbody),
+#             Paragraph(str(c.fkfaculty.fkname.name), tbody),
+#             Paragraph(str(c.fkresolution.number), tbody),
+#             Paragraph(str(c.fkresolution.start_date), tbody),
+#             Paragraph(str(c.fkresolution.end_date), tbody),
+#             ])
+    
+#     # Create the table
+#     career_table = Table(table_data, colWidths=[doc.width/8.0]*8)
+
+#     career_table.setStyle(TableStyle(
+#         [
+#             ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+#             ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+#             ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+#         ]
+#     ))
+#     elements.append(career_table)
+#     doc.build(elements)
+
+#     # Get the value of the BytesIO buffer and write it to the response.
+#     response.write(buff.getvalue())
+#     buff.close()
+#     return response
 
 # def render(request, search, options):
 #     title = 'test PDF'
