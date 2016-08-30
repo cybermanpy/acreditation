@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^acreditation/pdfpostponed', views.pdfPostponed, name='pdfPostponed'),
     url(r'^acreditation/pdfno-reputable', views.pdfNoReputable, name='pdfNoReputable'),
     url(r'^acreditation/pdfposgrado', views.pdfPosgrado, name='pdfPosgrado'),
+    url(r'^acreditation/report', views.report, name='report'),
     url(r'^acreditation/cleanner/(?P<link>\w+)/$', views.cleanner, name='cleanner'),
     # url(r'^acreditation/render-pdf', views.renderPdf, name='renderPdf'),
     # url(r'^acreditation/pdfnational/(?P<search>\w+[^/]+)/(?P<options>\w+)/$', views.pdfNational, name='pdfNational'),

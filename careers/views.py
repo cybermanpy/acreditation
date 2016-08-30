@@ -10,11 +10,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 # Librerias para requeridas para generar pdf
 from io import BytesIO
+from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, inch, landscape, portrait
+from reportlab.lib.pagesizes import letter, inch, landscape, portrait, cm, A4
+import urllib
+import StringIO
+import PIL.Image
 
 # Create your views here.
 
@@ -666,6 +670,72 @@ def pdfPosgrado(request):
     # Get the value of the BytesIO buffer and write it to the response.
     response.write(buff.getvalue())
     buff.close()
+    return response
+
+def report(request):
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="carrerasAcreditadas.pdf"'
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+
+    # Header
+    c.setLineWidth(.3)
+    c.setFont('Helvetica', 22)
+    c.drawString(30,750, 'ANEAES')
+
+    careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+
+    # careers = [ 
+    #     {'nro':'1', 'programa':'Especialización'},
+    #     {'nro':'2', 'programa':'Especialización'},
+    #     {'nro':'3', 'programa':'Especialización'}
+    # ]
+
+    # table header
+    styles = getSampleStyleSheet()
+    styleBH = styles['Normal']
+    styleBH.alignment = TA_CENTER
+    styleBH.fontSize = 10
+
+    number = Paragraph('''Nro.''', styleBH)
+    program = Paragraph('''Programa ''', styleBH)
+    institute = Paragraph('''Institución ''', styleBH)
+
+    data = []
+
+    data.append([number, program, institute])
+
+    # table c
+    styleN = styles['BodyText']
+    styleN.alignment = TA_CENTER
+    styleN.fontSize = 7
+
+    high = 650
+
+    for i, career in enumerate(careers):
+    # for career in careers:
+        this_career = [Paragraph(str(career.national), styleN), Paragraph(str(career.fknamecareer.description), styleN), Paragraph(str(career.fkfaculty.fkuniversity.name), styleN)]
+        data.append(this_career)
+        high = high - 18
+
+    # table size
+    width, height = letter
+    table = Table(data, colWidths=[1.9 * cm, 2.9 * cm, 2.9 * cm])
+    table.setStyle(TableStyle([
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ]))
+
+    # pdf size
+    table.wrapOn(c, width, height)
+    table.drawOn(c, 30, high)
+    c.showPage() # save page
+
+    # save pdf 
+    c.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
     return response
 
 # def renderPdf(request):
