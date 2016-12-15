@@ -5,7 +5,7 @@ from django.db import models
 # Create your models here.
 
 class Resolution(models.Model):
-    number = models.IntegerField(blank=False);
+    number = models.IntegerField(blank=False)
     start_date = models.DateField()
     end_date = models.DateField()
     document = models.FileField(upload_to='resolutions/%Y_%m_%d/')

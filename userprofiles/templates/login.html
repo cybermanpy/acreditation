@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+
+    <section>
+        <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="login">
+            <input type="text" name="username">
+            <input type="password" name="passwd">
+            <button type="submit">Login</button>
+        </form>
+
+        <h2>Signup</h2>
+        <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="signup">
+            <input type="text" name="username">
+            <input type="password" name="passwd">
+            <button type="submit">Signup</button>
+        </form>
+    </section>
+
+{% endblock %}

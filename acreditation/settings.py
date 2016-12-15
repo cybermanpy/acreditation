@@ -33,12 +33,16 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'campuses.apps.CampusesConfig',
     'careers.apps.CareersConfig',
+    'departments.apps.DepartmentsConfig',
+    'evaltypes.apps.EvaltypesConfig',
+    'evaluators.apps.EvaluatorsConfig',
     'faculties.apps.FacultiesConfig',
     'namecareers.apps.NamecareersConfig',
     'names.apps.NamesConfig',
     'resolutions.apps.ResolutionsConfig',
     'statuses.apps.StatusesConfig',
     'universities.apps.UniversitiesConfig',
+    'userprofiles.apps.UserprofilesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -90,8 +94,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'acreditation',
         'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': '192.168.1.40',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
         'PORT': '5432'
     }
 }

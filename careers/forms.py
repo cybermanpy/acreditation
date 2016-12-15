@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # from django.forms import ModelForm
 # from universities.models import University
 from django import forms
@@ -11,6 +13,9 @@ MY_CHOICES = (
     ('1', 'Carrera'),
     ('2', 'Universidad'),
     ('3', 'Facultad'),
+    ('4', 'Sede'),
+    ('5', 'Departamento'),
+    ('6', 'Año'),
     )
 
 class FormSearch(forms.Form):

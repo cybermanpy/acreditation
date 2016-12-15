@@ -5,5 +5,5 @@ from .models import Campus
 
 @admin.register(Campus)
 class AdminCampus(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description',)
-    list_filter = ('name',)
+    list_display = ('id', 'name', 'description', 'fkdepartment',)
+    list_filter = ('name', 'fkdepartment',)

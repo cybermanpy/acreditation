@@ -12,5 +12,5 @@ class NameCareer(models.Model):
 
     class Meta:
         verbose_name = 'Name Career'
-        verbose_name = 'Name Careers'
+        verbose_name_plural = 'Name Careers'
         ordering = ('id',)
