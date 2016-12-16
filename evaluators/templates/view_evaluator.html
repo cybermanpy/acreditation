@@ -12,7 +12,6 @@
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Tipo</th>
-                <th>Carrera</th>
                 <th>Curriculum</th>
                 <th>Resolución</th>
             </tr>
@@ -22,7 +21,7 @@
                 <tr>
                     <td> {{ e.fkevaluator.firstname }} </td>
                     <td> {{ e.fkevaluator.lastname }} </td>
-                    <td> {{ e.fkevaltype.description }} </td>
+                    <td> {{ e.fktypeevaluator.description }} </td>
                     <td> {{ e.fkevaluator.curriculum }} </td>
                     <td> {{ e.fkevaluator.fkresolution.document }} </td>
                 </tr>

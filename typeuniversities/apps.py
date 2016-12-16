@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class EvaltypesConfig(AppConfig):
-    name = 'evaltypes'
+class TypeuniversitiesConfig(AppConfig):
+    name = 'typeuniversities'

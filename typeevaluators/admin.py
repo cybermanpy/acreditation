@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import EvalType
+from .models import TypeEvaluator
 # Register your models here.
 
-@admin.register(EvalType)
-class AdminEvalType(admin.ModelAdmin):
+@admin.register(TypeEvaluator)
+class AdminTypeEvaluator(admin.ModelAdmin):
     list_display = ('id', 'description',)
     list_filter = ('description',)
