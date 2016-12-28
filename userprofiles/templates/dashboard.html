@@ -9,12 +9,7 @@
 
 
 <h2>
-    {% if user.is_authenticated %}
-        <h2><a href="{% url 'userprofiles:logout' %}">Logout {{ user.username }}</a></h2>
-        <h3><a href="{% url 'evaluators:evaluator' %}">Evaluators</a></h3>
-    {% else %}
-        <h2><a href="{% url 'userprofiles:authentication' %}">Logout</a></h2>
-    {% endif %}
+    Welcome
 </h2>
 
 {% endblock %}

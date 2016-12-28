@@ -54,13 +54,12 @@ def authentication(request):
 
 @login_required(login_url='/login')
 def dashboard(request):
-    title = 'Hello'
+    title = 'Sistema de Pares Evaluadores'
     template = loader.get_template('dashboard.html')
     context = {
         'title': title,
     }
     return HttpResponse(template.render(context, request))
-
 
 # def authentication(request):
 #     title = 'Login'

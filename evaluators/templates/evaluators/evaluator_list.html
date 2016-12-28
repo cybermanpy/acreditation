@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Curriculum</th>
+                <th>Resolución</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ev in object_list %}
+                <tr>
+                    <td> {{ ev.firstname }} </td>
+                    <td> {{ ev.lastname }} </td>
+                    {% if ev.curriculum.url != "" %}
+                        <td> <a href="{{ ev.curriculum.url }}">Curriculum</a></td>
+                    {% else %}
+                        <td>Curriculum</td>
+                    {% endif %}
+                    <td> <a href="{{ ev.fkresolution.document.url }}"> {{ ev.fkresolution.number }} </a></td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+{% endblock %}
