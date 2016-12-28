@@ -11,7 +11,7 @@ class Evaluator(models.Model):
     firstname = models.CharField(blank=False, max_length=100, null=False)
     lastname = models.CharField(blank=False, max_length=100, null=False)
     fkresolution = models.ForeignKey(Resolution)
-    curriculum = models.FileField(blank=True, upload_to='curriculum/%Y_%m_%d/')
+    curriculum = models.FileField(blank=True, upload_to='curriculums/%Y_%m_%d/')
     typesevaluators = models.ManyToManyField(TypeEvaluator, through='TypesEvaluator')
 
     def __str__(self):

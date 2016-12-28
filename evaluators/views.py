@@ -6,7 +6,7 @@ from .models import TypesEvaluator
 # Create your views here.
 
 def viewEvaluator(request):
-    title = 'Lista de Pares Evaluadores Institucionales'
+    title = 'Pares Evaluadores Institucionales'
     template = loader.get_template('view_evaluator.html')
     listEvaluator = TypesEvaluator.objects.filter(fknamecareer__description__icontains='Institucional')
     context = {

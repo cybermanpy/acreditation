@@ -11,7 +11,6 @@
             <tr>
                 <th>Nombre</th>
                 <th>Apellido</th>
-                <th>Tipo</th>
                 <th>Curriculum</th>
                 <th>Resolución</th>
             </tr>
@@ -21,9 +20,12 @@
                 <tr>
                     <td> {{ e.fkevaluator.firstname }} </td>
                     <td> {{ e.fkevaluator.lastname }} </td>
-                    <td> {{ e.fktypeevaluator.description }} </td>
-                    <td> {{ e.fkevaluator.curriculum }} </td>
-                    <td> {{ e.fkevaluator.fkresolution.document }} </td>
+                    {% if e.fkevaluator.curriculum.url != "" %}
+                        <td> <a href="{{ e.fkevaluator.curriculum.url }}">Curriculum</a></td>
+                    {% else %}
+                        <td>Curriculum</td>
+                    {% endif %}
+                    <td> <a href="{{ e.fkevaluator.fkresolution.document.url }}"> {{ e.fkevaluator.fkresolution.number }} </a></td>
                 </tr>
             {% endfor%}
         </tbody>

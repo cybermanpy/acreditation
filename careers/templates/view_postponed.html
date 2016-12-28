@@ -49,7 +49,7 @@
                     <td> {{ c.fkfaculty.fkuniversity }} </td>
                     <td> {{ c.fknamecareer }} </td>
                     <td> {{ c.fkfaculty.fkcampus }} </td>
-                    <td> {{ c.fkresolution.number }} / {{ c.fkresolution.start_date|dateF2 }} </td>
+                    <td> <a href="{{ c.fkresolution.document.url }}"> {{ c.fkresolution.number }} / {{ c.fkresolution.start_date|dateF2 }} </a></td>
                 </tr>
             {% endfor%}
         </tbody>

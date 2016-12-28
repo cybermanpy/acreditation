@@ -57,7 +57,7 @@
                     <td> {{ c.fkfaculty.fkuniversity }} </td>
                     <td> {{ c.fkfaculty.fkcampus }} </td>
                     <td> {{ c.fkfaculty.fkname }} </td>
-                    <td> {{ c.fkresolution.number }} </td>
+                    <td> <a href="{{ c.fkresolution.document.url }}"> {{ c.fkresolution.number }} </a></td>
                     <td> {{ c.fkresolution.start_date|dateF1 }} </td>
                     <td> {{ c.fkresolution.end_date|dateF1 }} </td>
                 </tr>

@@ -16,6 +16,7 @@ MY_CHOICES = (
     ('4', 'Sede'),
     ('5', 'Departamento'),
     ('6', 'Año'),
+    ('7', 'Tipo Universidad'),
     )
 
 class FormSearch(forms.Form):
