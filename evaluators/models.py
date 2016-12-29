@@ -4,6 +4,7 @@ from django.db import models
 from resolutions.models import Resolution
 from typeevaluators.models import TypeEvaluator
 from namecareers.models import NameCareer
+from statuses.models import Status
 
 # Create your models here.
 
@@ -13,6 +14,7 @@ class Evaluator(models.Model):
     fkresolution = models.ForeignKey(Resolution)
     curriculum = models.FileField(blank=True, upload_to='curriculums/%Y_%m_%d/')
     typesevaluators = models.ManyToManyField(TypeEvaluator, through='TypesEvaluator')
+    fkstatus = models.ForeignKey(Status)
 
     def __str__(self):
         return "%s %s" %(self.firstname, self.lastname)
@@ -32,6 +34,6 @@ class TypesEvaluator(models.Model):
         return "%s %s" %(self.fkevaluator, self.fktypeevaluator)
 
     class Meta:
-        verbose_name = 'TypeEvaluator'
-        verbose_name_plural = 'TypesEvaluators'
+        verbose_name = 'Type Evaluator'
+        verbose_name_plural = 'Types Evaluators'
         ordering = ('id',)

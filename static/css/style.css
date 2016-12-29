@@ -1,6 +1,7 @@
-@media (min-width: 600px) {
+body { padding-bottom: 70px; }
+@media (min-width: 900px) {
     .container {
-        width: 600px;
+        width: 900px;
     }
     h1, h2, h3, h4, h5 {
         text-align: center

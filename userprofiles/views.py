@@ -7,11 +7,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-
-
+from django.core.urlresolvers import reverse
 
 def authentication(request):
-    title = 'Login'
+    title = 'Login Sistema de Pares Evaluadores'
     template = loader.get_template('login.html')
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/dashboard')
@@ -24,7 +23,8 @@ def authentication(request):
             if access is not None:
                 if access.is_active:
                     login(request, access)
-                    return HttpResponseRedirect('/dashboard')
+                    url = 'userprofiles:dashboard'
+                    return HttpResponseRedirect(reverse(url))
                 else:
                     text = 'El usuario no esta Activo'
                     contextNoActive = {
@@ -52,7 +52,7 @@ def authentication(request):
     }
     return HttpResponse(template.render(context, request))
 
-@login_required(login_url='/login')
+@login_required(login_url='/login/')
 def dashboard(request):
     title = 'Sistema de Pares Evaluadores'
     template = loader.get_template('dashboard.html')

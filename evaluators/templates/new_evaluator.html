@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+         <div class="form-group row">
+                <label for="firtname" class="col-sm-2">Nombre</label>
+            <div class="col-sm-10">
+                {% render_field form.firstname class="form-control" %}
+                <strong class="text-danger"> {{ form.firstname.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="lastname" class="col-sm-2">Apellido</label>
+            <div class="col-sm-10">
+                {% render_field form.lastname class="form-control" %}
+                <strong class="text-danger"> {{ form.lastname.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="resolution" class="col-sm-2">Resolución</label>
+            <div class="col-sm-10">
+                {% render_field form.fkresolution class="form-control" %}
+                <strong class="text-danger"> {{ form.fkresolution.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="curriculum" class="col-sm-2">Curriculum</label>
+            <div class="col-sm-10">
+                {% render_field form.curriculum class="file" %}
+                <strong class="text-danger"> {{ form.curriculum.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="status" class="col-sm-2">Estado</label>
+            <div class="col-sm-10">
+                {% render_field form.fkstatus class="form-control" %}
+                <strong class="text-danger"> {{ form.fkstatus.errors }} </strong>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+   </form>
+
+{% endblock %}
