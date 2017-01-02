@@ -20,7 +20,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for ev in object_list %}
+            {% for ev in listEvaluator %}
                 <tr>
                     <td> <a href="{% url 'evaluators:edit' ev.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
                     <td> {{ ev.firstname }} </td>

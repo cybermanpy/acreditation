@@ -9,12 +9,13 @@ from django.contrib.auth.decorators import login_required
 from .forms import EvaluatorForm, TypeEvaluatorForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 @login_required(login_url='/login/')
 def viewEvaluatorInstitutional(request):
     title = 'Pares Evaluadores Institucionales'
-    template = loader.get_template('view_evaluator.html')
-    listEvaluator = TypesEvaluator.objects.filter(fknamecareer__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+    template = loader.get_template('view_evaluator_institutional.html')
+    listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
     context = {
         'title': title,
         'listEvaluator': listEvaluator,
@@ -36,10 +37,10 @@ def viewEvaluatorGrado(request):
 def viewEvaluator(request):
     title = 'Pares Evaluadores'
     template = loader.get_template('list_evaluator.html')
-    object_list = Evaluator.objects.all()
+    listEvaluator = Evaluator.objects.all()
     context = {
         'title': title,
-        'object_list': object_list,
+        'listEvaluator': listEvaluator,
     }
     return HttpResponse(template.render(context, request))
 
@@ -65,15 +66,15 @@ def newEvaluator(request):
 def editEvaluator(request, pk):
     title = 'Actualizar par'
     template = loader.get_template('new_evaluator.html')
-    e=get_object_or_404(Evaluator,pk=pk)
-    if request.method=='POST':
-        form=EvaluatorForm(request.POST, instance=e)
+    ins = get_object_or_404(Evaluator,pk=pk)
+    if request.method == 'POST':
+        form = EvaluatorForm(request.POST, instance=ins)
         if form.is_valid():
             form.save()
             url = 'evaluators:evaluator'
             return HttpResponseRedirect(reverse(url))
     else:
-        form=EvaluatorForm(instance=e)
+        form = EvaluatorForm(instance=ins)
     context = {
         'title': title,
         'form': form,
@@ -86,7 +87,7 @@ def newTypeEvaluator(request):
     title = 'Asignar tipo de par'
     template = loader.get_template('new_typesevaluator.html')
     if request.method == 'POST':
-        form = TypeEvaluatorForm(request.POST, request.FILES)
+        form = TypeEvaluatorForm(request.POST)
         if form.is_valid():
             form.save()
             url = 'userprofiles:dashboard'
@@ -99,8 +100,35 @@ def newTypeEvaluator(request):
     }
     return HttpResponse(template.render(context, request))
 
-class EvaluatorList(ListView):
+
+@login_required(login_url='/login/')
+def editTypeEvaluator(request, pk):
+    title = 'Actualizar tipo par'
+    template = loader.get_template('new_typesevaluator.html')
+    ins = get_object_or_404(TypesEvaluator, pk=pk)
+    if request.method == 'POST':
+        form = TypeEvaluatorForm(request.POST, instance=ins)
+        if form.is_valid():
+            form.save()
+            url = 'userprofiles:dashboard'
+            return HttpResponseRedirect(reverse(url))
+    else:
+        form = TypeEvaluatorForm(instance=ins)
+    context = {
+        'title': title,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+class EvaluatorList(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     model = Evaluator
+
+    # def get_queryset(self):
+    #     return Evaluator.objects.filter(firstname='Ramona')
 
 class EvaluatorDetail(DetailView):
     model = Evaluator
+
+
+# template_name = 'loggedin_load/live_bids.html'

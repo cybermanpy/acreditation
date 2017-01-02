@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th colspan="4"><a href="{% url 'namecareers:new' %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a> </th>
+            </tr>
+            <tr>
+                <th>Edit</th>
+                <th>ID</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in listNameCareer %}
+                <tr>
+                    <td> <a href="{% url 'namecareers:edit' c.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                    <td> {{ c.id }} </td>
+                    <td> {{ c.description }} </td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+{% endblock %}

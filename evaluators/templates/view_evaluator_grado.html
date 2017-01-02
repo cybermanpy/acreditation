@@ -9,6 +9,7 @@
     <table class="table table-condensed table-striped">
         <thead>
             <tr>
+                <th>Edit</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Carrera</th>
@@ -19,15 +20,16 @@
         <tbody>
             {% for e in listEvaluator %}
                 <tr>
+                    <td> <a href="{% url 'evaluators:editType' e.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
                     <td> {{ e.fkevaluator.firstname }} </td>
                     <td> {{ e.fkevaluator.lastname }} </td>
                     <td> {{ e.fknamecareer.description }} </td>
                     {% if e.fkevaluator.curriculum.url != "" %}
-                        <td> <a href="{{ e.fkevaluator.curriculum.url }}">Curriculum</a></td>
+                        <td> <a href="{{ e.fkevaluator.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></a></td>
                     {% else %}
-                        <td>Curriculum</td>
+                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></div></td>
                     {% endif %}
-                    <td> <a href="{{ e.fkevaluator.fkresolution.document.url }}"> {{ e.fkevaluator.fkresolution.number }} </a></td>
+                    <td> <a href="{{ e.fkevaluator.fkresolution.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-file" aria-hidden="true"> {{ e.fkevaluator.fkresolution.number }} </a></td>
                 </tr>
             {% endfor%}
         </tbody>

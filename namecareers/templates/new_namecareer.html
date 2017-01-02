@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+         <div class="form-group row">
+                <label for="description" class="col-sm-2">Descripción</label>
+            <div class="col-sm-10">
+                {% render_field form.description class="form-control" %}
+                <strong class="text-danger"> {{ form.description.errors }} </strong>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+   </form>
+
+{% endblock %}
