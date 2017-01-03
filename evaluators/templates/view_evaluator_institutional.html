@@ -2,8 +2,12 @@
 {% load widget_tweaks %}
 
 {% block title %}
-{{ title }}
+    {{ title }}
 {% endblock %}
+
+{% block header %}  
+    {{ title|upper }}
+{% endblock %} 
 
 {% block content %}
     <table class="table table-condensed table-striped">

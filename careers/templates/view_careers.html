@@ -1,10 +1,14 @@
-{% extends 'layout.html' %}
+{% extends 'base.html' %}
 {% load widget_tweaks %}
 {% load careers_extras %}
 
 {% block title %}
-{{ title }}
+    {{ title }}
 {% endblock %}
+
+{% block header %}  
+    {{ title|upper }}
+{% endblock %} 
 
 {% block content %}
 
@@ -23,16 +27,16 @@
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
         {% if label == 'national' %}
-            <a href="{% url 'careers.views.pdfNational' %}" class="btn btn-primary">Generar Pdf</a>
-            <a href="{% url 'careers.views.cleanner' label %}" class="btn btn-primary">Limpiar</a>
+            <a href="{% url 'careers:pdfNational' %}" class="btn btn-primary">Generar Pdf</a>
+            <a href="{% url 'careers:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
         {% if label == 'arcusur' %}
-            <a href="{% url 'careers.views.pdfArcusur' %}" class="btn btn-primary">Generar Pdf</a>
-            <a href="{% url 'careers.views.cleanner' label %}" class="btn btn-primary">Limpiar</a>
+            <a href="{% url 'careers:pdfArcusur' %}" class="btn btn-primary">Generar Pdf</a>
+            <a href="{% url 'careers:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
         {% if label == 'history' %}
-            <a href="{% url 'careers.views.pdfHistory' %}" class="btn btn-primary">Generar Pdf</a>
-            <a href="{% url 'careers.views.cleanner' label %}" class="btn btn-primary">Limpiar</a>
+            <a href="{% url 'careers:pdfHistory' %}" class="btn btn-primary">Generar Pdf</a>
+            <a href="{% url 'careers:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
     </form>
 

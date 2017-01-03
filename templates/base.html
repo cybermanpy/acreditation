@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=divice-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title> {% block title %}  {% endblock %} </title>
+</head>
+<body>
+    <section class="container">
+        <header>
+            <div class="page-header">
+                <h4> {% block header %}  {% endblock %} </h4>
+            </div>
+        </header>
+        {% block content %} {% endblock %}
+    </section>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    
+</body>
+</html>

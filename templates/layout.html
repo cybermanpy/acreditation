@@ -12,7 +12,7 @@
 	<section class="container">
 		<header>
 			<div class="page-header">
-				<h4> {{ title|upper }} </h4>
+				<h4> {% block header %}  {% endblock %} </h4>
 			</div>
 			{% if user.is_authenticated %}
 			<nav class="navbar navbar-inverse" role="navigation">
@@ -33,7 +33,7 @@
 			       otro elemento que se pueda ocultar al minimizar la barra -->
 			  <div class="collapse navbar-collapse navbar-ex1-collapse">
 			    <ul class="nav navbar-nav">
-			      <li class="dropdown active">
+			      <li class="dropdown">
 			        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 			          Pares Evaluadores <b class="caret"></b>
 			        </a>

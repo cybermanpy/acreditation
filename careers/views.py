@@ -8,6 +8,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from careers.forms import FormSearch
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 # Librerias para requeridas para generar pdf
 from io import BytesIO
@@ -343,17 +344,23 @@ def cleanner(request, link):
     request.session['s_text'] = ''
     request.session['s_options'] = ''
     if link == 'national':
-        return redirect('/acreditation/model/national')
+        url = 'careers:national'
+        return redirect(reverse(url))
     elif link == 'arcusur':
-        return redirect('/acreditation/model/arcusur')
+        url = 'careers:arcusur'
+        return redirect(reverse(url))
     elif link == 'postponed':
-        return redirect('/acreditation/postponed')
+        url = 'careers:postponed'
+        return redirect(reverse(url))
     elif link == 'noreputable':
-        return redirect('/acreditation/no-reputable')
+        url = 'careers:noreputable'
+        return redirect(reverse(url))
     elif link == 'posgrado':
-        return redirect('/acreditation/posgrado')
+        url = 'careers:postgrado'
+        return redirect(reverse(url))
     elif link == 'history':
-        return redirect('/acreditation/history')
+        url = 'careers:history'
+        return redirect(reverse(url))
     
 
 def pdfNational(request):

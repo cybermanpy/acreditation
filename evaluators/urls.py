@@ -9,5 +9,7 @@ urlpatterns = [
     url(r'^dashboard/evaluator/add/type/$', views.newTypeEvaluator, name='newtype'),
     url(r'^dashboard/evaluator/edit/type/(?P<pk>[0-9]+)/$', views.editTypeEvaluator, name='editType'),
     url(r'^dashboard/evaluator/list/view/$', views.EvaluatorList.as_view(), name='list'),
+    url(r'^dashboard/evaluator/list/institutional/$', views.ListInstitutional.as_view(), name='listInstitutional'),
+    url(r'^dashboard/evaluator/list/agronomia/$', views.ListAgronomia.as_view(), name='listAgronomia'),
     url(r'^dashboard/evaluator/(?P<pk>[0-9]+)/$', views.EvaluatorDetail.as_view(), name='EvaluatorDetail'),
 ]

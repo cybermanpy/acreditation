@@ -120,12 +120,22 @@ def editTypeEvaluator(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
+class ListInstitutional(ListView):
+    model = TypesEvaluator
+    title = 'Pares Institucionales'
+
+    def get_queryset(self):
+        return TypesEvaluator.objects.filter(fknamecareer__description__icontains='Institucional')
+
+class ListAgronomia(ListView):
+    model = TypesEvaluator
+
+    def get_queryset(self):
+        return TypesEvaluator.objects.filter(fknamecareer__description__icontains='Ingeniería Agronómica')
+
 class EvaluatorList(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Evaluator
-
-    # def get_queryset(self):
-    #     return Evaluator.objects.filter(firstname='Ramona')
 
 class EvaluatorDetail(DetailView):
     model = Evaluator
