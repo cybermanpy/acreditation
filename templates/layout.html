@@ -38,7 +38,7 @@
 			          Pares Evaluadores <b class="caret"></b>
 			        </a>
 			        <ul class="dropdown-menu">
-			          <li><a href="{% url 'evaluators:grado' %}">Grado</a></li>
+			          <li><a href="{% url 'evaluators:degree' %}">Grado</a></li>
 			          <li><a href="{% url 'evaluators:institutional' %}">Institucional</a></li>
 			          <li><a href="{% url 'evaluators:evaluator' %}">Todos</a></li>
 			          <li class="divider"></li>
@@ -62,6 +62,15 @@
 			          <li><a href="{% url 'namecareers:new' %}">Agregar</a></li>
 			        </ul>
 			      </li>
+			      <li class="dropdown">
+			        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			          Resoluciones <b class="caret"></b>
+			        </a>
+			        <ul class="dropdown-menu">
+			          <li><a href="{% url 'resolutions:list' %}">Listar</a></li>
+			          <li><a href="{% url 'resolutions:new' %}">Agregar</a></li>
+			        </ul>
+			      </li>
 			    </ul>
 
 			    <ul class="nav navbar-nav navbar-right">
@@ -83,6 +92,7 @@
 	</section>
 	<script src="{% static 'js/jquery.min.js' %}"></script>
 	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/acreditation.js' %}"></script>
 	
 </body>
 </html>

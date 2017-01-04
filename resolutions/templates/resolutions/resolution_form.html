@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ view.title }}
+{% endblock %}
+
+{% block header %}  
+    {{ view.title|upper }}
+{% endblock %} 
+
+{% block content %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+         <div class="form-group row">
+                <label for="number" class="col-sm-2">Numero</label>
+            <div class="col-sm-10">
+                {% render_field form.number class="form-control" %}
+                <strong class="text-danger"> {{ form.number.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="start_date" class="col-sm-2">Fecha Inicio</label>
+            <div class="col-sm-10">
+                {% render_field form.start_date class="form-control" placeholder="dd/mm/aaaa" id="start" type="date" %}
+                <strong class="text-danger"> {{ form.start_date.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="end_date" class="col-sm-2">Fecha Fin</label>
+            <div class="col-sm-10">
+                {% render_field form.end_date class="form-control" placeholder="dd/mm/aaaa" id="end" type="date" %}
+                <strong class="text-danger"> {{ form.end_date.errors }} </strong>
+            </div>
+        </div>
+        <div class="form-group row">
+                <label for="document" class="col-sm-2">Documento</label>
+            <div class="col-sm-10">
+                {% render_field form.document class="file" %}
+                <strong class="text-danger"> {{ form.document.errors }} </strong>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success pull-right">Guardar</button>
+   </form>
+
+{% endblock %}

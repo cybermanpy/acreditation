@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load careers_extras %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block header %}  
+    {{ title|upper }}
+{% endblock %} 
+
+{% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="search" class="col-sm-2">Busqueda por:</label>
+            <div class="col-sm-10">
+                {% render_field form.text class="form-control" %}
+                <strong class="text-danger"> {{ form.text.errors }} </strong>
+            </div>
+            <div class="radio-inline">
+                {% render_field form.options class="radio-inline" %}
+                <strong class="text-danger"> {{ form.options.errors }} </strong>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        {% if label == 'institutional' %}
+            <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
+        {% endif %}
+        {% if label == 'degree' %}
+            <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
+        {% endif %}
+    </form>
+
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                {% if label == 'degree' %}<th> Carrera </th>{% endif %}
+                <th>Curriculum</th>
+                <th>Resolución</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for te in typesEvaluatorList %}
+                <tr>
+                    <td> {{ te.fkevaluator.firstname }} </td>
+                    <td> {{ te.fkevaluator.lastname }} </td>
+                    {% if label == 'degree' %} <td> {{ te.fknamecareer.description }} </td> {% endif %}
+                    {% if te.fkevaluator.curriculum.url != "" %}
+                        <td> <a href="{{ te.fkevaluator.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
+                    {% else %}
+                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></div></td>
+                    {% endif %}
+                    <td> <a href="{{ te.fkevaluator.fkresolution.document.url }}" class="btn btn-info btn-sm"> <span class="glyphicon glyphicon-file" aria-hidden="true"> {{ te.fkevaluator.fkresolution.number }} </a></td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+{% endblock %}

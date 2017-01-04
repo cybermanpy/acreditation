@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ view.title }}
+{% endblock %}
+
+{% block header %}  
+    {{ view.title|upper }}
+{% endblock %} 
+
+{% block content %}
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th colspan="4"><a href="{% url 'resolutions:new' %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a> </th>
+            </tr>
+            <tr>
+                <th>Edit</th>
+                <th>Numero</th>
+                <th>Fecha</th>
+                <th>Resolución</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in object_list %}
+            <tr>
+                <td> <a href="{% url 'resolutions:edit' r.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                <td> {{ r.number }} </td>
+                <td> {{ r.start_date }} </td>
+                <td> <a href="{{ r.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> {{ r.number }}</a></td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+{% endblock %}

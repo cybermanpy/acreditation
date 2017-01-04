@@ -29,9 +29,9 @@
                     <td> {{ e.fkevaluator.lastname }} </td>
                     <td> {{ e.fknamecareer.description }} </td>
                     {% if e.fkevaluator.curriculum.url != "" %}
-                        <td> <a href="{{ e.fkevaluator.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></a></td>
+                        <td> <a href="{{ e.fkevaluator.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
                     {% else %}
-                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></div></td>
+                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></div></td>
                     {% endif %}
                     <td> <a href="{{ e.fkevaluator.fkresolution.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-file" aria-hidden="true"> {{ e.fkevaluator.fkresolution.number }} </a></td>
                 </tr>

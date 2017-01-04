@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 
 def authentication(request):
-    title = 'Login Sistema de Pares Evaluadores'
+    title = 'Login'
     template = loader.get_template('login.html')
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/dashboard')

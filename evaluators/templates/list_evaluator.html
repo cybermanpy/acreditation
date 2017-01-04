@@ -30,9 +30,9 @@
                     <td> {{ ev.firstname }} </td>
                     <td> {{ ev.lastname }} </td>
                     {% if ev.curriculum.url != "" %}
-                        <td> <a href="{{ ev.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></a></td>
+                        <td> <a href="{{ ev.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
                     {% else %}
-                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></div></td>
+                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></div></td>
                     {% endif %}
                     <td> <a href="{{ ev.fkresolution.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-file" aria-hidden="true"> {{ ev.fkresolution.number }} </a></td>
                 </tr>

@@ -6,9 +6,9 @@ from .models import TypesEvaluator, Evaluator
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
-from .forms import EvaluatorForm, TypeEvaluatorForm
+from .forms import EvaluatorForm, TypeEvaluatorForm, FormSearchIns, FormSearchDegree
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 @login_required(login_url='/login/')
@@ -23,7 +23,7 @@ def viewEvaluatorInstitutional(request):
     return HttpResponse(template.render(context, request))
 
 @login_required(login_url='/login/')
-def viewEvaluatorGrado(request):
+def viewEvaluatorDegree(request):
     title = 'Pares Evaluadores de Carreras de Grado'
     template = loader.get_template('view_evaluator_grado.html')
     listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
@@ -81,7 +81,6 @@ def editEvaluator(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
-
 @login_required(login_url='/login/')
 def newTypeEvaluator(request):
     title = 'Asignar tipo de par'
@@ -99,7 +98,6 @@ def newTypeEvaluator(request):
         'form': form,
     }
     return HttpResponse(template.render(context, request))
-
 
 @login_required(login_url='/login/')
 def editTypeEvaluator(request, pk):
@@ -119,6 +117,88 @@ def editTypeEvaluator(request, pk):
         'form': form,
     }
     return HttpResponse(template.render(context, request))
+
+def searchInstitutional(request):
+    title = 'Pares Institucionales'
+    label = 'institutional'
+    template = loader.get_template('searchevaluator_list.html')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchIns(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__firstname__icontains=search,  fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+            elif options == '2':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__lastname__icontains=search,  fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+            context = {
+                'title': title,
+                'label': label,
+                'typesEvaluatorList': typesEvaluatorList,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchIns()
+    typesEvaluatorList = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+    context = {
+        'title': title,
+        'label': label,
+        'typesEvaluatorList': typesEvaluatorList,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+def searchDegree(request):
+    title = 'Pares Evaluadores de Carreras de Grado'
+    label = 'degree'
+    template = loader.get_template('searchevaluator_list.html')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchDegree(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__firstname__icontains=search, fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+            elif options == '2':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__lastname__icontains=search, fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+            elif options == '3':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fknamecareer__description__icontains=search, fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+            context = {
+                'title': title,
+                'label': label,
+                'typesEvaluatorList': typesEvaluatorList,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchDegree()
+    typesEvaluatorList = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    context = {
+        'title': title,
+        'label': label,
+        'typesEvaluatorList': typesEvaluatorList,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+def cleanner(request, link):
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if link == 'institutional':
+        url = 'evaluators:searchInstitutional'
+        return redirect(reverse(url))
+    elif link == 'degree':
+        url = 'evaluators:searchDegree'
+        return redirect(reverse(url))
 
 class ListInstitutional(ListView):
     model = TypesEvaluator

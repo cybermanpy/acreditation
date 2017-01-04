@@ -18,6 +18,25 @@ class TypeEvaluatorForm(forms.ModelForm):
         model = TypesEvaluator
         fields = ('__all__')
 
+MY_INSTITUTIONAL = (
+    ('1', 'Nombre'),
+    ('2', 'Apellido'),
+    )
+
+class FormSearchIns(forms.Form):
+    text = forms.CharField(label='Busqueda', error_messages={'required': 'Este campo es obligatorio'})
+    options = forms.ChoiceField(choices=MY_INSTITUTIONAL, widget=forms.RadioSelect, error_messages={'required': 'Este campo es obligatorio'})
+
+
+MY_DEGREE = (
+    ('1', 'Nombre'),
+    ('2', 'Apellido'),
+    ('3', 'Carrera'),
+    )
+
+class FormSearchDegree(forms.Form):
+    text = forms.CharField(label='Busqueda', error_messages={'required': 'Este campo es obligatorio'})
+    options = forms.ChoiceField(choices=MY_DEGREE, widget=forms.RadioSelect, error_messages={'required': 'Este campo es obligatorio'})
 
 # class MyModelForm(forms.ModelForm):
 #     def __init__(self, request, *args, **kwargs):
