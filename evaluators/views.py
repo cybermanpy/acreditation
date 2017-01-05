@@ -3,6 +3,8 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from .models import TypesEvaluator, Evaluator
+from typeevaluators.models import TypeEvaluator
+from namecareers.models import NameCareer
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
@@ -10,15 +12,47 @@ from .forms import EvaluatorForm, TypeEvaluatorForm, FormSearchIns, FormSearchDe
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 @login_required(login_url='/login/')
 def viewEvaluatorInstitutional(request):
     title = 'Pares Evaluadores Institucionales'
     template = loader.get_template('view_evaluator_institutional.html')
-    listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchIns(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__firstname__icontains=search, fkevaluator__fkstatus__description='Activo')
+            elif options == '2':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__lastname__icontains=search, fkevaluator__fkstatus__description='Activo')
+            context = {
+                'title': title,
+                'listEvaluator': listEvaluator,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchIns()
+    listPaginator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+    paginator = Paginator(listPaginator, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        listEvaluator = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        listEvaluator = paginator.page(paginator.num_pages)
     context = {
         'title': title,
         'listEvaluator': listEvaluator,
+        'form': form,
     }
     return HttpResponse(template.render(context, request))
 
@@ -26,10 +60,43 @@ def viewEvaluatorInstitutional(request):
 def viewEvaluatorDegree(request):
     title = 'Pares Evaluadores de Carreras de Grado'
     template = loader.get_template('view_evaluator_grado.html')
-    listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchDegree(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo', fkevaluator__firstname__icontains=search)
+            elif options == '2':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo', fkevaluator__lastname__icontains=search)
+            elif options == '3':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo', fknamecareer__description__icontains=search)
+            context = {
+                'title': title,
+                'listEvaluator': listEvaluator,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchDegree()
+    listPaginator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    paginator = Paginator(listPaginator, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        listEvaluator = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        listEvaluator = paginator.page(paginator.num_pages)
     context = {
         'title': title,
         'listEvaluator': listEvaluator,
+        'form': form,
     }
     return HttpResponse(template.render(context, request))
 
@@ -37,10 +104,41 @@ def viewEvaluatorDegree(request):
 def viewEvaluator(request):
     title = 'Pares Evaluadores'
     template = loader.get_template('list_evaluator.html')
-    listEvaluator = Evaluator.objects.all()
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchIns(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                listEvaluator = Evaluator.objects.filter(firstname__icontains=search)
+            elif options == '2':
+                listEvaluator = Evaluator.objects.filter(lastname__icontains=search)
+            context = {
+                'title': title,
+                'listEvaluator': listEvaluator,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchIns()
+    listPaginator = Evaluator.objects.all()
+    paginator = Paginator(listPaginator, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        listEvaluator = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        listEvaluator = paginator.page(paginator.num_pages)
     context = {
         'title': title,
         'listEvaluator': listEvaluator,
+        'form': form,
     }
     return HttpResponse(template.render(context, request))
 
@@ -81,23 +179,23 @@ def editEvaluator(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
-@login_required(login_url='/login/')
-def newTypeEvaluator(request):
-    title = 'Asignar tipo de par'
-    template = loader.get_template('new_typesevaluator.html')
-    if request.method == 'POST':
-        form = TypeEvaluatorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            url = 'userprofiles:dashboard'
-            return HttpResponseRedirect(reverse(url))
-    else:
-        form = TypeEvaluatorForm()
-    context = {
-        'title': title,
-        'form': form,
-    }
-    return HttpResponse(template.render(context, request))
+# @login_required(login_url='/login/')
+# def newTypeEvaluator(request):
+#     title = 'Asignar tipo de par'
+#     template = loader.get_template('new_typesevaluator.html')
+#     if request.method == 'POST':
+#         form = TypeEvaluatorForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             url = 'userprofiles:dashboard'
+#             return HttpResponseRedirect(reverse(url))
+#     else:
+#         form = TypeEvaluatorForm()
+#     context = {
+#         'title': title,
+#         'form': form,
+#     }
+#     return HttpResponse(template.render(context, request))
 
 @login_required(login_url='/login/')
 def editTypeEvaluator(request, pk):
@@ -190,6 +288,45 @@ def searchDegree(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required(login_url='/login/')
+def newEvaluatorInstitutional(request, label, user):
+    template = loader.get_template('new_typesevaluator.html')
+    if request.method == 'POST':
+        if label == '1':
+            title = 'Agregar como par de carreras de grado'
+            form = TypeEvaluatorForm(request.POST)
+            form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
+            form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+            form.fields['fknamecareer'].queryset = NameCareer.objects.exclude(description='Institucional')
+        elif label == '2':
+            title = 'Agregar como par institucional'
+            form = TypeEvaluatorForm(request.POST)
+            form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
+            form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+            form.fields['fknamecareer'].queryset = NameCareer.objects.filter(description='Institucional')
+        if form.is_valid():
+            form.save()
+            url = 'userprofiles:dashboard'
+            return HttpResponseRedirect(reverse(url))
+    else:
+        if label == '1':
+            title = 'Agregar como par de carreras de grado'
+            form = TypeEvaluatorForm()
+            form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
+            form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+            form.fields['fknamecareer'].queryset = NameCareer.objects.exclude(description='Institucional')
+        elif label == '2':
+            title = 'Agregar como par institucional'
+            form = TypeEvaluatorForm()
+            form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
+            form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+            form.fields['fknamecareer'].queryset = NameCareer.objects.filter(description='Institucional')
+    context = {
+        'title': title,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
 def cleanner(request, link):
     request.session['s_text'] = ''
     request.session['s_options'] = ''
@@ -219,6 +356,5 @@ class EvaluatorList(LoginRequiredMixin, ListView):
 
 class EvaluatorDetail(DetailView):
     model = Evaluator
-
 
 # template_name = 'loggedin_load/live_bids.html'

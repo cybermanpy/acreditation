@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block header %}  
+    {{ title|upper }}
+{% endblock %} 
+
+{% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="search" class="col-sm-2">Busqueda por:</label>
+            <div class="col-sm-10">
+                {% render_field form.text class="form-control" type="number" %}
+                <strong class="text-danger"> {{ form.text.errors }} </strong>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a href="{% url 'resolutions:view' %}" class="btn btn-primary">Limpiar</a>
+    </form>
+
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th colspan="4"><a href="{% url 'resolutions:view' %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a> </th>
+            </tr>
+            <tr>
+                <th>Edit</th>
+                <th>ID</th>
+                <th>Numero</th>
+                <th>Fecha</th>
+                <th>Documento</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in listResolution %}
+                <tr>
+                    <td> <a href="{% url 'resolutions:edit' r.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                    <td> {{ r.id }} </td>
+                    <td> {{ r.number }} </td>
+                    <td> {{ r.start_date }} </td>
+                    <td> <a href="{{ r.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> {{ r.number }}</a></td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+    <ul class="pagination pagination-sm"> 
+        {% if listResolution.has_previous %}
+            <li><a href="?page={{ listResolution.previous_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></a></li>
+        {% endif %}
+        {% for pg in listResolution.paginator.page_range %}
+            {% if listResolution.number == pg %}
+                <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+            {% else %}
+                <li><a href="?page={{ pg }}">{{pg}}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if listResolution.has_next %}
+            <li><a href="?page={{ listResolution.next_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a></li>
+        {% endif %}
+    </ul>
+{% endblock %}

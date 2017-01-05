@@ -10,6 +10,7 @@
 {% endblock %} 
 
 {% block content %}
+
     <table class="table table-condensed table-striped">
         <thead>
             <tr>
@@ -33,4 +34,19 @@
             {% endfor%}
         </tbody>
     </table>
+    <ul class="pagination pagination-sm"> 
+        {% if object_list.has_previous %}
+            <li><a href="?page={{ object_list.previous_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></a></li>
+        {% endif %}
+        {% for pg in object_list.paginator.page_range %}
+            {% if object_list.number == pg %}
+                <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+            {% else %}
+                <li><a href="?page={{ pg }}">{{pg}}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if object_list.has_next %}
+            <li><a href="?page={{ object_list.next_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a></li>
+        {% endif %}
+    </ul>
 {% endblock %}

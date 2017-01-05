@@ -6,16 +6,42 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import NameCareer
-from .forms import NameCareerForm
+from .forms import NameCareerForm, FormSearchNameCareer
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 @login_required(login_url='/login/')
 def viewNameCareer(request):
     title = 'Nombre de Carreras'
     template = loader.get_template('view_namecareer.html')
-    listNameCareer = NameCareer.objects.all()
+    request.session['s_text'] = ''
+    if request.method == 'POST':
+        form = FormSearchNameCareer(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            request.session['s_text'] = search
+            listNameCareer = NameCareer.objects.filter(description__icontains=search)
+            context = {
+                'title': title,
+                'listNameCareer': listNameCareer,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchNameCareer()
+    listPaginator = NameCareer.objects.all()
+    paginator = Paginator(listPaginator, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        listNameCareer = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        listNameCareer = paginator.page(paginator.num_pages)
     context = {
         'title': title,
         'listNameCareer': listNameCareer,
+        'form': form,
     }
     return HttpResponse(template.render(context, request))
 
