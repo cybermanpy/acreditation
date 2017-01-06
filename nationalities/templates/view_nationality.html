@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block header %}  
+    {{ title|upper }}
+{% endblock %} 
+
+{% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="search" class="col-sm-2">Busqueda por nacionalidad:</label>
+            <div class="col-sm-6">
+                {% render_field form.text class="form-control" %}
+                <strong class="text-danger"> {{ form.text.errors }} </strong>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a href="{% url 'nationalities:view' %}" class="btn btn-primary">Limpiar</a>
+    </form>
+
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th colspan="4"><a href="{% url 'resolutions:view' %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a> </th>
+            </tr>
+            <tr>
+                <th>Edit</th>
+                <th>ID</th>
+                <th>Numero</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in listNationality %}
+                <tr>
+                    <td> <a href="{% url 'nationalities:edit' n.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                    <td> {{ n.id }} </td>
+                    <td> {{ n.origin }} </td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+    <ul class="pagination pagination-sm"> 
+        {% if listNationality.has_previous %}
+            <li><a href="?page={{ listNationality.previous_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></a></li>
+        {% endif %}
+        {% for pg in listNationality.paginator.page_range %}
+            {% if listNationality.number == pg %}
+                <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+            {% else %}
+                <li><a href="?page={{ pg }}">{{pg}}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if listNationality.has_next %}
+            <li><a href="?page={{ listNationality.next_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a></li>
+        {% endif %}
+    </ul>
+{% endblock %}

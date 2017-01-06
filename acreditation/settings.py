@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'statuses.apps.StatusesConfig',
     'typeevaluators.apps.TypeevaluatorsConfig',
     'typeuniversities.apps.TypeuniversitiesConfig',
+    'nationalities.apps.NationalitiesConfig',
     'universities.apps.UniversitiesConfig',
     'userprofiles.apps.UserprofilesConfig',
     'django.contrib.admin',

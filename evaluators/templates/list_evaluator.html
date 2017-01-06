@@ -39,6 +39,8 @@
                 <th>Grado</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
+                <th>Cedula</th>
+                <th>E-mail</th>
                 <th>Curriculum</th>
                 <th>Resolución</th>
             </tr>
@@ -51,6 +53,8 @@
                     <td> <a href="{% url 'evaluators:addType' 1 ev.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-education" aria-hidden="true"></span></a></td>
                     <td> {{ ev.firstname }} </td>
                     <td> {{ ev.lastname }} </td>
+                    <td> {{ ev.ci }} </td>
+                    <td> {{ ev.email }} </td>
                     {% if ev.curriculum.url != "" %}
                         <td> <a href="{{ ev.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
                     {% else %}

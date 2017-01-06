@@ -6,5 +6,5 @@ class NameCareerForm(forms.ModelForm):
         model = NameCareer
         fields = ('__all__')
 
-class FormSearchNameCareer(forms.Form):
+class FormSearch(forms.Form):
     text = forms.CharField(label='Busqueda', error_messages={'required': 'Este campo es obligatorio'})

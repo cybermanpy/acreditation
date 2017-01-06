@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {{ view.title }}
+{% endblock %}
+
+{% block header %}  
+    {{ view.title|upper }}
+{% endblock %} 
+
+{% block content %}
+
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th colspan="4"><a href="{% url 'nationalities:new' %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a> </th>
+            </tr>
+            <tr>
+                <th>Edit</th>
+                <th>Nacionalidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in object_list %}
+            <tr>
+                <td> <a href="{% url 'nationalities:edit' r.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                <td> {{ r.origin }} </td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+    <ul class="pagination pagination-sm"> 
+        {% if object_list.has_previous %}
+            <li><a href="?page={{ object_list.previous_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></a></li>
+        {% endif %}
+        {% for pg in object_list.paginator.page_range %}
+            {% if object_list.number == pg %}
+                <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+            {% else %}
+                <li><a href="?page={{ pg }}">{{pg}}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if object_list.has_next %}
+            <li><a href="?page={{ object_list.next_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a></li>
+        {% endif %}
+    </ul>
+{% endblock %}

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.http import HttpResponse
 from .models import Resolution
-from .forms import FormSearchResolution
+from namecareers.forms import FormSearch
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 
@@ -19,7 +19,7 @@ def viewResolution(request):
     template = loader.get_template('view_resolution.html')
     request.session['s_text'] = ''
     if request.method == 'POST':
-        form = FormSearchResolution(request.POST)
+        form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             request.session['s_text'] = search
@@ -31,7 +31,7 @@ def viewResolution(request):
             }
             return HttpResponse(template.render(context, request))
     else:
-        form = FormSearchResolution()
+        form = FormSearch()
     listPaginator = Resolution.objects.all()
     paginator = Paginator(listPaginator, 10)
     try:

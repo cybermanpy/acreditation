@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import NameCareer
-from .forms import NameCareerForm, FormSearchNameCareer
+from .forms import NameCareerForm, FormSearch
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 @login_required(login_url='/login/')
@@ -15,7 +15,7 @@ def viewNameCareer(request):
     template = loader.get_template('view_namecareer.html')
     request.session['s_text'] = ''
     if request.method == 'POST':
-        form = FormSearchNameCareer(request.POST)
+        form = FormSearch(request.POST)
         if form.is_valid():
             search = request.POST['text']
             request.session['s_text'] = search
@@ -27,7 +27,7 @@ def viewNameCareer(request):
             }
             return HttpResponse(template.render(context, request))
     else:
-        form = FormSearchNameCareer()
+        form = FormSearch()
     listPaginator = NameCareer.objects.all()
     paginator = Paginator(listPaginator, 10)
     try:
