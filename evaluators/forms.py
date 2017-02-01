@@ -10,7 +10,7 @@ class EvaluatorForm(forms.ModelForm):
 
     class Meta:
         model = Evaluator
-        fields = ['firstname', 'lastname', 'fkresolution', 'ci', 'email',  'curriculum', 'fkstatus', ]
+        fields = ['firstname', 'lastname', 'fkresolution', 'ci', 'email',  'curriculum', 'fkstatus', 'fknationality' ]
         # exclude = ['typesevaluators', ]
 
 class TypeEvaluatorForm(forms.ModelForm):

@@ -48,7 +48,7 @@
                 <th>Institución</th>
                 <th>Sede</th>
                 <th>Facultad</th>
-                <th>Resolución</th>
+                {% if label == 'arcusur' %} <th>Acuerdo</th> {% else %} <th>Resolución</th> {% endif %}
                 <th>Fecha</th>
                 <th>Periodo de Acreditación</th>
             </tr>
