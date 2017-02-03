@@ -11,9 +11,17 @@
 
 {% block content %}
 
+    {% if error %}
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <strong class="text-danger text-center"> {{ error|upper }} </strong>
+            </div>
+        </div>
+    {% endif %}
+
     <form method="POST">
         {% csrf_token %}
-         <div class="form-group row">
+        <div class="form-group row">
                 <label for="evaluator" class="col-sm-2">Par Evaluador</label>
             <div class="col-sm-10">
                 {% render_field form.fkevaluator class="form-control" %}

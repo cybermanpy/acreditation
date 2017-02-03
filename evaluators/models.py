@@ -37,6 +37,7 @@ class TypesEvaluator(models.Model):
         return "%s %s" %(self.fkevaluator, self.fktypeevaluator)
 
     class Meta:
+        unique_together = ('fkevaluator', 'fktypeevaluator', 'fknamecareer')
         verbose_name = 'Type Evaluator'
         verbose_name_plural = 'Types Evaluators'
         ordering = ('id',)

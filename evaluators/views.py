@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.db import IntegrityError
 
 @login_required(login_url='/login/')
 def viewEvaluatorInstitutional(request):
@@ -166,7 +167,7 @@ def editEvaluator(request, pk):
     template = loader.get_template('new_evaluator.html')
     ins = get_object_or_404(Evaluator,pk=pk)
     if request.method == 'POST':
-        form = EvaluatorForm(request.POST, instance=ins)
+        form = EvaluatorForm(request.POST, request.FILES, instance=ins)
         if form.is_valid():
             form.save()
             url = 'evaluators:evaluator'
@@ -242,7 +243,7 @@ def searchInstitutional(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearchIns()
-    typesEvaluatorList = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo')
+    typesEvaluatorList = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Institucional', fkevaluator__fkstatus__description='Activo').order_by('fknamecareer__description')
     context = {
         'title': title,
         'label': label,
@@ -304,10 +305,34 @@ def newEvaluatorInstitutional(request, label, user):
             form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
             form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
             form.fields['fknamecareer'].queryset = NameCareer.objects.filter(description='Institucional')
+        elif label == '3':
+            title = 'Agregar como par de carreras de grado modelo ARCUSUR'
+            form = TypeEvaluatorForm(request.POST)
+            form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
+            form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+            form.fields['fknamecareer'].queryset = NameCareer.objects.exclude(description='Institucional')
         if form.is_valid():
             form.save()
-            url = 'userprofiles:dashboard'
+            if label == '1':
+                url = 'evaluators:degree'
+            elif label == '2':
+                url = 'evaluators:institutional'
+            elif label == '3':
+                url = 'evaluators:degree'
             return HttpResponseRedirect(reverse(url))
+        else:
+            if label == '1':
+                error = 'El par evaluador ya pertenece a esa carrera'
+            elif label == '2':
+                error = "El par evaluador ya es institucional"
+            elif label == '3':
+                error = "El par evaluador ya pertence al modelo ARCUSUR"
+            contextError = {
+                'title': title,
+                'error': error,
+                'form': form,
+            }
+            return HttpResponse(template.render(contextError, request))            
     else:
         if label == '1':
             title = 'Agregar como par de carreras de grado'
@@ -321,6 +346,12 @@ def newEvaluatorInstitutional(request, label, user):
             form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
             form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
             form.fields['fknamecareer'].queryset = NameCareer.objects.filter(description='Institucional')
+        elif label == '3':
+            title = 'Agregar como par de carreras de grado modelo ARCUSUR'
+            form = TypeEvaluatorForm()
+            form.fields['fktypeevaluator'].queryset = TypeEvaluator.objects.filter(id=label)
+            form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+            form.fields['fknamecareer'].queryset = NameCareer.objects.exclude(description='Institucional')
     context = {
         'title': title,
         'form': form,
