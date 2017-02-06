@@ -50,7 +50,7 @@
                     {% else %}
                         <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></div></td>
                     {% endif %}
-                    <td> <a href="{{ e.fkevaluator.fkresolution.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-file" aria-hidden="true"> {{ e.fkevaluator.fkresolution.number }} </a></td>
+                    <td> <a href="{{ e.fkresolution.document.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> {{ e.fkresolution.number }} </a></td>
                 </tr>
             {% endfor%}
         </tbody>
