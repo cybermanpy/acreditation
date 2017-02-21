@@ -11,7 +11,6 @@ from namecareers.forms import FormSearch
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 
-
 @login_required(login_url='/login/')
 def viewNationality(request):
     title = 'Descripcion de la nacionalidad'

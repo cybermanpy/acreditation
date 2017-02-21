@@ -3,6 +3,7 @@ from . import views
 urlpatterns = [
     url(r'^dashboard/evaluator/institutional/$', views.viewEvaluatorInstitutional, name='institutional'),
     url(r'^dashboard/evaluator/degree/$', views.viewEvaluatorDegree, name='degree'),
+    url(r'^dashboard/evaluator/arcusur/$', views.viewEvaluatorArcusur, name='arcusur'),
     url(r'^dashboard/evaluator/list/$', views.viewEvaluator, name='evaluator'),
     url(r'^dashboard/evaluator/add/new/$', views.newEvaluator, name='new'),
     url(r'^dashboard/evaluator/edit/(?P<pk>[0-9]+)/$', views.editEvaluator, name='edit'),
@@ -10,6 +11,7 @@ urlpatterns = [
     url(r'^dashboard/evaluator/edit/type/(?P<pk>[0-9]+)/$', views.editTypeEvaluator, name='editType'),
     url(r'^dashboard/evaluator/list/institutional/$', views.searchInstitutional, name='searchInstitutional'),
     url(r'^dashboard/evaluator/list/degree/$', views.searchDegree, name='searchDegree'),
+    url(r'^dashboard/evaluator/list/arcusur/$', views.searchArcusur, name='searchArcusur'),
     url(r'^dashboard/evaluator/cleanner/(?P<link>\w+)/$', views.cleanner, name='cleanner'),
     url(r'^dashboard/evaluator/list/view/$', views.EvaluatorList.as_view(), name='list'),
     url(r'^dashboard/evaluator/add/type/(?P<label>[0-9]+)/(?P<user>[0-9]+)$', views.newEvaluatorInstitutional, name='addType'),

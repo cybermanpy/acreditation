@@ -32,6 +32,9 @@
         {% if label == 'degree' %}
             <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
+        {% if label == 'arcusur' %}
+            <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
+        {% endif %}
     </form>
 
     <table class="table table-condensed table-striped">
@@ -39,7 +42,7 @@
             <tr>
                 <th>Nombre</th>
                 <th>Apellido</th>
-                {% if label == 'degree' %}<th> Carrera </th>{% endif %}
+                {% if label == 'degree' or label == 'arcusur' %}<th> Carrera </th>{% endif %}
                 <th>Curriculum</th>
                 <th>Resolución</th>
             </tr>
@@ -49,7 +52,7 @@
                 <tr>
                     <td> {{ te.fkevaluator.firstname }} </td>
                     <td> {{ te.fkevaluator.lastname }} </td>
-                    {% if label == 'degree' %} <td> {{ te.fknamecareer.description }} </td> {% endif %}
+                    {% if label == 'degree' or label == 'arcusur' %} <td> {{ te.fknamecareer.description }} </td> {% endif %}
                     {% if te.fkevaluator.curriculum.url != "" %}
                         <td> <a href="{{ te.fkevaluator.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
                     {% else %}

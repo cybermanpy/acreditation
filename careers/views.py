@@ -21,6 +21,8 @@ from reportlab.lib.pagesizes import letter, inch, landscape, portrait, cm, A4
 import urllib
 import StringIO
 import PIL.Image
+from django.core import serializers
+import json
 
 # Create your views here.
 
@@ -958,6 +960,19 @@ def report(request):
     buffer.close()
     response.write(pdf)
     return response
+
+
+# def careersJson(request):
+#     listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+#     jsonData = serializers.serialize('json', listCareer)
+#     return HttpResponse(jsonData, content_type="application/json")
+
+def careersJson(request):
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    data = [{'Intitución': item.fkfaculty.fkuniversity.name, 'Sede': item.fkfaculty.fkcampus.name, 'Facultad': item.fkfaculty.fkname.name, 'Carrera': item.fknamecareer.description, 'Resolución': item.fkresolution.number, 'Fecha': str(item.fkresolution.start_date), 'Periodo de Acreditación': str(item.fkresolution.end_date)} for item in listCareer ]
+    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
+    # jsonData = serializers.serialize('json', listCareer)
+    # return HttpResponse(jsonData, content_type="application/json")
 
 # def renderPdf(request):
 #     response = HttpResponse(content_type='aplication/pdf')

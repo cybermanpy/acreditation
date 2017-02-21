@@ -60,7 +60,7 @@ def viewEvaluatorInstitutional(request):
 @login_required(login_url='/login/')
 def viewEvaluatorDegree(request):
     title = 'Pares Evaluadores de Carreras de Grado'
-    template = loader.get_template('view_evaluator_grado.html')
+    template = loader.get_template('view_evaluator_degree.html')
     request.session['s_text'] = ''
     request.session['s_options'] = ''
     if request.method == 'POST':
@@ -85,6 +85,50 @@ def viewEvaluatorDegree(request):
     else:
         form = FormSearchDegree()
     listPaginator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    paginator = Paginator(listPaginator, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        listEvaluator = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        listEvaluator = paginator.page(paginator.num_pages)
+    context = {
+        'title': title,
+        'listEvaluator': listEvaluator,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+@login_required(login_url='/login/')
+def viewEvaluatorArcusur(request):
+    title = 'Pares Evaluadores de Carreras de Grado Modelo Arcusur'
+    template = loader.get_template('view_evaluator_degree.html')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchDegree(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo', fkevaluator__firstname__icontains=search)
+            elif options == '2':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo', fkevaluator__lastname__icontains=search)
+            elif options == '3':
+                listEvaluator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo', fknamecareer__description__icontains=search)
+            context = {
+                'title': title,
+                'listEvaluator': listEvaluator,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchDegree()
+    listPaginator = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo')
     paginator = Paginator(listPaginator, 10)
     try:
         page = int(request.GET.get('page', '1'))
@@ -289,6 +333,43 @@ def searchDegree(request):
     }
     return HttpResponse(template.render(context, request))
 
+def searchArcusur(request):
+    title = 'Pares Evaluadores de Carreras de Grado Modelo Arcusur'
+    label = 'arcusur'
+    template = loader.get_template('searchevaluator_list.html')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchDegree(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__firstname__icontains=search, fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo')
+            elif options == '2':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__lastname__icontains=search, fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo')
+            elif options == '3':
+                typesEvaluatorList = TypesEvaluator.objects.filter(fknamecareer__description__icontains=search, fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo')
+            context = {
+                'title': title,
+                'label': label,
+                'typesEvaluatorList': typesEvaluatorList,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchDegree()
+    typesEvaluatorList = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Arcusur', fkevaluator__fkstatus__description='Activo')
+    context = {
+        'title': title,
+        'label': label,
+        'typesEvaluatorList': typesEvaluatorList,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
 @login_required(login_url='/login/')
 def newEvaluatorInstitutional(request, label, user):
     template = loader.get_template('new_typesevaluator.html')
@@ -318,7 +399,7 @@ def newEvaluatorInstitutional(request, label, user):
             elif label == '2':
                 url = 'evaluators:institutional'
             elif label == '3':
-                url = 'evaluators:degree'
+                url = 'evaluators:arcusur'
             return HttpResponseRedirect(reverse(url))
         else:
             if label == '1':
@@ -366,6 +447,9 @@ def cleanner(request, link):
         return redirect(reverse(url))
     elif link == 'degree':
         url = 'evaluators:searchDegree'
+        return redirect(reverse(url))
+    elif link == 'arcusur':
+        url = 'evaluators:searchArcusur'
         return redirect(reverse(url))
 
 class ListInstitutional(ListView):

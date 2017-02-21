@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'acreditation',
         'USER': 'postgres',
         'PASSWORD': 'Aneaes*_',
-        'HOST': '127.0.0.1',
+        'HOST': '192.168.1.40',
         'PORT': '5432'
     }
 }
