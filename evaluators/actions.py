@@ -10,17 +10,17 @@ from openpyxl.styles import Font
 
 def export_xls(modeladmin, request, queryset):
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=careers.xls'
+    response['Content-Disposition'] = 'attachment; filename=evaluators.xls'
     wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet("careers")
+    ws = wb.add_sheet("evaluators")
     
     row_num = 0
     
     columns = [
-        (u"ID", 2000),
-        (u"Carrera", 6000),
-        (u"Facultad", 8000),
-        (u"Universidad", 8000),
+        (u"Nombre", 2000),
+        (u"Apellido", 6000),
+        (u"Carrera", 8000),
+        (u"E-mail", 8000),
     ]
 
     font_style = xlwt.XFStyle()
@@ -37,10 +37,10 @@ def export_xls(modeladmin, request, queryset):
     for obj in queryset:
         row_num += 1
         row = [
-            obj.pk,
+            obj.fkevaluator.firstname,
+            obj.fkevaluator.lastname,
             obj.fknamecareer.description,
-            obj.fkfaculty.fkname.name,
-            obj.fkfaculty.fkuniversity.name,
+            obj.fkevaluator.email,
         ]
         for col_num in xrange(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
@@ -53,7 +53,7 @@ export_xls.short_description = u"Export XLS"
 
 def export_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=careers.csv'
+    response['Content-Disposition'] = 'attachment; filename=evaluators.csv'
     writer = csv.writer(response, csv.excel)
     response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
     writer.writerow([
@@ -83,21 +83,18 @@ export_csv.short_description = u"Export CSV"
 
 def export_xlsx(modeladmin, request, queryset):
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=careers.xlsx'
+    response['Content-Disposition'] = 'attachment; filename=evaluators.xlsx'
     wb = openpyxl.Workbook()
     ws = wb.get_active_sheet()
-    ws.title = "careers"
+    ws.title = "evaluators"
 
     row_num = 0
 
     columns = [
-        (u"Carrera", 40),
-        (u"Institución", 60),
-        (u"Sede", 27),
-        (u"Facultad", 40),
-        (u"Resolución", 20),
-        (u"Fecha", 17),
-        (u"Periodo", 17),
+        (u"Nombre", 40),
+        (u"Apellido", 60),
+        (u"Carrera", 27),
+        (u"E-mail", 40),
     ]
 
     italic24Font = Font(name='Time New Roman', size=18, bold=True)
@@ -112,13 +109,10 @@ def export_xlsx(modeladmin, request, queryset):
     for obj in queryset:
         row_num += 1
         row = [
+            obj.fkevaluator.firstname,
+            obj.fkevaluator.lastname,
             obj.fknamecareer.description,
-            obj.fkfaculty.fkuniversity.name,
-            obj.fkfaculty.fkcampus.name,
-            obj.fkfaculty.fkname.name,
-            obj.fkresolution.number,
-            obj.fkresolution.start_date,
-            obj.fkresolution.end_date,
+            obj.fkevaluator.email,
         ]
         for col_num in xrange(len(row)):
             c = ws.cell(row=row_num + 1, column=col_num + 1)
