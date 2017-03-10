@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+import datetime
 
 # Create your models here.
 
@@ -17,3 +18,16 @@ class Resolution(models.Model):
         verbose_name = 'Resolution'
         verbose_name_plural = 'Resolutions'
         ordering = ('id',)
+
+    def _get_term(self):
+        return "%s / %s" %(self.start_date, self.end_date)
+
+    def _get_date(self):
+        return "%s" %(self.start_date)
+
+    def _format_date(self):
+        format = ('%Y')
+        return self.start_date.strftime(format)
+    
+    years = property(_format_date)
+    term = property(_get_term)

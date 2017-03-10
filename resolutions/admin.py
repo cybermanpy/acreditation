@@ -5,6 +5,6 @@ from .models import Resolution
 
 @admin.register(Resolution)
 class AdminResolution(admin.ModelAdmin):
-    list_display = ('id', 'number', 'start_date', 'end_date', 'document',)
-    search_fields = ('number',)
-    list_filter = ('number',)
+    list_display = ('id', 'number', 'start_date', 'end_date', 'document', 'years', )
+    search_fields = ('number', )
+    list_filter = ('number', )

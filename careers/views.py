@@ -969,7 +969,7 @@ def report(request):
 
 def careersJson(request):
     listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
-    data = [{'Intitución': item.fkfaculty.fkuniversity.name, 'Sede': item.fkfaculty.fkcampus.name, 'Facultad': item.fkfaculty.fkname.name, 'Carrera': item.fknamecareer.description, 'Resolución': item.fkresolution.number, 'Fecha': str(item.fkresolution.start_date), 'Periodo de Acreditación': str(item.fkresolution.end_date)} for item in listCareer ]
+    data = [{'Intitución': item.fkfaculty.fkuniversity.name, 'Sede': item.fkfaculty.fkcampus.name, 'Facultad': item.fkfaculty.fkname.name, 'Carrera': item.fknamecareer.description, 'Resolución': item.fkresolution.number, 'Fecha': str(item.fkresolution.start_date), 'Periodo de Acreditación': str(item.fkresolution.term)} for item in listCareer ]
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
     # jsonData = serializers.serialize('json', listCareer)
     # return HttpResponse(jsonData, content_type="application/json")

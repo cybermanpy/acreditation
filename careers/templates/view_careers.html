@@ -43,14 +43,18 @@
     <table class="table table-condensed table-striped">
         <thead>
             <tr>
+                <th colspan="6" ></th>
+                <th colspan="2">Periodo de Acreditación</th>
+            </tr>
+            <tr>
                 <th>Nro.</th>
                 <th>Carrera</th>
                 <th>Institución</th>
                 <th>Sede</th>
                 <th>Facultad</th>
                 {% if label == 'arcusur' %} <th>Acuerdo</th> {% else %} <th>Resolución</th> {% endif %}
-                <th>Fecha</th>
-                <th>Periodo de Acreditación</th>
+                <th>Inicio</th>
+                <th>Fin</th>
             </tr>
         </thead>
         <tbody>
@@ -62,8 +66,8 @@
                     <td> {{ c.fkfaculty.fkcampus }} </td>
                     <td> {{ c.fkfaculty.fkname }} </td>
                     <td> <a href="{{ c.fkresolution.document.url }}"> {{ c.fkresolution.number }} </a></td>
-                    <td> {{ c.fkresolution.start_date|dateF1 }} </td>
-                    <td> {{ c.fkresolution.end_date|dateF1 }} </td>
+                    <td>{{ c.fkresolution.start_date|dateF1 }}</td>
+                    <td>{{ c.fkresolution.end_date|dateF1 }}</td>
                 </tr>
             {% endfor%}
         </tbody>
