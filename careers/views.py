@@ -23,6 +23,8 @@ import StringIO
 import PIL.Image
 from django.core import serializers
 import json
+import csv
+from django.utils.encoding import smart_str
 
 # Create your views here.
 
@@ -40,19 +42,19 @@ def viewNational(request):
             request.session['s_text'] = search
             request.session['s_options'] = options
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '4':
-                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '5':
-                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '6':
-                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '7':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             context = {
                 'careers': careers,
                 'title': title,
@@ -62,7 +64,7 @@ def viewNational(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -94,19 +96,19 @@ def viewHistory(request):
             request.session['s_text'] = search
             request.session['s_options'] = options
             if options == '1':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fknamecareer__description__icontains=search, arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fknamecareer__description__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '2':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '3':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkname__name__icontains=search,  arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkname__name__icontains=search,  arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '4':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '5':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__fkdepartment__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__fkdepartment__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '6':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkresolution__start_date__year=search, arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkresolution__start_date__year=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '7':
-                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             context = {
                 'careers': careers,
                 'title': title,
@@ -116,7 +118,7 @@ def viewHistory(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), arcusur=False, posgrado=False).order_by('national')
+    listCareer = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -148,19 +150,19 @@ def viewPostponed(request):
             request.session['s_text'] = search
             request.session['s_options'] = options
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '4':
-                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '5':
-                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '6':
-                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '7':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             context = {
                 'careers': careers,
                 'title': title,
@@ -170,7 +172,7 @@ def viewPostponed(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -202,19 +204,19 @@ def viewNoReputable(request):
             request.session['s_text'] = search
             request.session['s_options'] = options
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '4':
-                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '5':
-                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '6':
-                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             elif options == '7':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
             context = {
                 'careers': careers,
                 'title': title,
@@ -224,7 +226,7 @@ def viewNoReputable(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -256,19 +258,19 @@ def viewPosgrado(request):
             request.session['s_text'] = search
             request.session['s_options'] = options
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             elif options == '4':
-                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             elif options == '5':
-                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             elif options == '6':
-                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             elif options == '7':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
             context = {
                 'careers': careers,
                 'title': title,
@@ -278,7 +280,7 @@ def viewPosgrado(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -310,19 +312,19 @@ def viewArcusur(request):
             request.session['s_text'] = search
             request.session['s_options'] = options
             if options == '1':
-                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             elif options == '2':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             elif options == '3':
-                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             elif options == '4':
-                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             elif options == '5':
-                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             elif options == '6':
-                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             elif options == '7':
-                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+                careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
             context = {
                 'careers': careers,
                 'title': title,
@@ -332,7 +334,7 @@ def viewArcusur(request):
             return HttpResponse(template.render(context, request))
     else:
         form = FormSearch()
-    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
     paginator = Paginator(listCareer, 10)
     try:
        page = int(request.GET.get('page', '1'))
@@ -403,21 +405,21 @@ def pdfNational(request):
     elements.append(im)
 
     if options == '':
-        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '1':
-        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '2':
-        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '3':
-        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '4':
-        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '5':
-        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '6':
-        careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkresolution__start_date__year=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '7':
-        careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
 
     elements.append(Paragraph('Carreras Acreditadas - Modelo Nacional', title))
 
@@ -495,21 +497,21 @@ def pdfHistory(request):
     elements.append(im)
 
     if options == '':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '1':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fknamecareer__description__icontains=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fknamecareer__description__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '2':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '3':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkname__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkname__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '4':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '5':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__fkdepartment__name__icontains=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__fkdepartment__name__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '6':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkresolution__start_date__year=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkresolution__start_date__year=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '7':
-        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, arcusur=False, posgrado=False).order_by('fkresolution__start_date')
 
     elements.append(Paragraph('Historicos Carreras Acreditadas - Modelo Nacional', title))
 
@@ -587,17 +589,17 @@ def pdfArcusur(request):
     elements.append(im)
 
     if options == '':
-        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
     elif options == '1':
-        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
     elif options == '2':
-        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
     elif options == '3':
-        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
     elif options == '4':
-        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
     elif options == '5':
-        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=True, posgrado=False).order_by('fkresolution__start_date')
 
     elements.append(Paragraph('Carreras Acreditadas - Modelo ARCU-SUR', title))
 
@@ -675,17 +677,17 @@ def pdfPostponed(request):
     elements.append(im)
 
     if options == '':
-        careers = Career.objects.filter(fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '1':
-        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '2':
-        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '3':
-        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '4':
-        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '5':
-        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Postergada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
 
     elements.append(Paragraph('Carreras Postergadas - Modelo Nacional', title))
 
@@ -758,17 +760,17 @@ def pdfNoReputable(request):
     elements.append(im)
 
     if options == '':
-        careers = Career.objects.filter(fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '1':
-        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '2':
-        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '3':
-        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '4':
-        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     elif options == '5':
-        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='No acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
 
     elements.append(Paragraph('Carreras No Acreditadas - Modelo Nacional', title))
 
@@ -840,17 +842,17 @@ def pdfPosgrado(request):
     elements.append(im)
 
     if options == '':
-        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+        careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
     elif options == '1':
-        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+        careers = Career.objects.filter(fknamecareer__description__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
     elif options == '2':
-        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkuniversity__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
     elif options == '3':
-        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkname__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
     elif options == '4':
-        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
     elif options == '5':
-        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('national')
+        careers = Career.objects.filter(fkfaculty__fkcampus__fkdepartment__name__icontains=search, fkstatus__description='Acreditada', arcusur=False, posgrado=True).order_by('fkresolution__start_date')
 
     elements.append(Paragraph('Programas de Posgrados Acreditados - Modelo Nacional', title))
     # Need a place to store our table rows
@@ -906,7 +908,7 @@ def report(request):
     c.setFont('Helvetica', 22)
     c.drawString(30,750, 'ANEAES')
 
-    careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    careers = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
 
     # careers = [ 
     #     {'nro':'1', 'programa':'Especialización'},
@@ -968,11 +970,40 @@ def report(request):
 #     return HttpResponse(jsonData, content_type="application/json")
 
 def careersJson(request):
-    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('national')
+    listCareer = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
     data = [{'Intitución': item.fkfaculty.fkuniversity.name, 'Sede': item.fkfaculty.fkcampus.name, 'Facultad': item.fkfaculty.fkname.name, 'Carrera': item.fknamecareer.description, 'Resolución': item.fkresolution.number, 'Fecha': str(item.fkresolution.start_date), 'Periodo de Acreditación': str(item.fkresolution.term)} for item in listCareer ]
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
     # jsonData = serializers.serialize('json', listCareer)
     # return HttpResponse(jsonData, content_type="application/json")
+
+def exportCsvCareers(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=carrerasAcreditadas.csv'
+    writer = csv.writer(response, csv.excel)
+    response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+    writer.writerow([
+        smart_str(u"Carrera"),
+        smart_str(u"Universidad"),
+        smart_str(u"Facultad"),
+        smart_str(u"Sede"),
+        smart_str(u"Departamento"),
+        smart_str(u"Fecha Inicio"),
+        smart_str(u"Fecha Finalización"),
+        smart_str(u"Tipo de Universidad"),
+    ])
+    queryset = Career.objects.filter(fkstatus__description='Acreditada', arcusur=False, posgrado=False).order_by('fkresolution__start_date')
+    for obj in queryset:
+        writer.writerow([
+            smart_str(obj.fknamecareer),
+            smart_str(obj.fkfaculty.fkuniversity.name),
+            smart_str(obj.fkfaculty.fkname.name),
+            smart_str(obj.fkfaculty.fkcampus.name),
+            smart_str(obj.fkfaculty.fkcampus.fkdepartment.name),
+            smart_str(obj.fkresolution.start_date),
+            smart_str(obj.fkresolution.end_date),
+            smart_str(obj.fkfaculty.fkuniversity.fktypeuniversity.description),
+        ])
+    return response
 
 # def renderPdf(request):
 #     response = HttpResponse(content_type='aplication/pdf')

@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^acreditation/report/$', views.report, name='report'),
     url(r'^acreditation/cleanner/(?P<link>\w+)/$', views.cleanner, name='cleanner'),
     url(r'^acreditation/api/v1/$', views.careersJson, name='careersJson'),
+    url(r'^acreditation/csvnational/$', views.exportCsvCareers, name='exportCsvCareers'),
     # url(r'^acreditation/v1/json/(?P<year>[0-9]+)/$', views.careersJson, name='careersJson'),
     # url(r'^acreditation/render-pdf/$', views.renderPdf, name='renderPdf'),
     # url(r'^acreditation/pdfnational/(?P<search>\w+[^/]+)/(?P<options>\w+)/$', views.pdfNational, name='pdfNational'),

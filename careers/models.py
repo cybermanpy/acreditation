@@ -15,7 +15,7 @@ class Career(models.Model):
     fkresolution = models.OneToOneField(Resolution)
     fkfaculty = models.ForeignKey(Faculty)
     fkuser = models.ForeignKey(User)
-    national = models.IntegerField(blank=False)
+    national = models.IntegerField(blank=True, null=True)
     arcusur = models.BooleanField(blank=False, default=False)
     posgrado = models.BooleanField(blank=False, default=False)
 

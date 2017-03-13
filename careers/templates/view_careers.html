@@ -28,6 +28,7 @@
         <button type="submit" class="btn btn-primary">Buscar</button>
         {% if label == 'national' %}
             <a href="{% url 'careers:pdfNational' %}" class="btn btn-primary">Generar Pdf</a>
+            <a href="{% url 'careers:exportCsvCareers' %}" class="btn btn-primary">Generar CSV</a>
             <a href="{% url 'careers:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
         {% if label == 'arcusur' %}
