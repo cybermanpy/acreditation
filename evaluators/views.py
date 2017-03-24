@@ -2,13 +2,13 @@
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from .models import TypesEvaluator, Evaluator
+from .models import TypesEvaluator, Evaluator, EvaluatorUniversity
 from typeevaluators.models import TypeEvaluator
 from namecareers.models import NameCareer
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
-from .forms import EvaluatorForm, TypeEvaluatorForm, FormSearchIns, FormSearchDegree
+from .forms import EvaluatorForm, TypeEvaluatorForm, EvaluatorUniversityForm, FormSearchIns, FormSearchDegree
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -451,6 +451,95 @@ def cleanner(request, link):
     elif link == 'arcusur':
         url = 'evaluators:searchArcusur'
         return redirect(reverse(url))
+
+
+@login_required(login_url='/login/')
+def viewDeclaration(request):
+    title = 'Declaraciones'
+    template = loader.get_template('view_declaration.html')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchIns(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                listDeclaration = EvaluatorUniversity.objects.filter(fkevaluator__fkstatus__description='Activo', fkevaluator__firstname__icontains=search)
+            elif options == '2':
+                listDeclaration = EvaluatorUniversity.objects.filter(fkevaluator__fkstatus__description='Activo', fkevaluator__lastname__icontains=search)
+            context = {
+                'title': title,
+                'listDeclaration': listDeclaration,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchIns()
+    listPaginator = EvaluatorUniversity.objects.filter(fkevaluator__fkstatus__description='Activo')
+    paginator = Paginator(listPaginator, 10)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        listDeclaration = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        listDeclaration = paginator.page(paginator.num_pages)
+    context = {
+        'title': title,
+        'listDeclaration': listDeclaration,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+
+@login_required(login_url='/login/')
+def newDeclaration(request):
+    title = 'Agregar nueva declaracion'
+    template = loader.get_template('new_declaration.html')
+    if request.method == 'POST':
+        form = EvaluatorUniversityForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            url = 'evaluators:viewDeclaration'
+            return HttpResponseRedirect(reverse(url))
+    else:
+        form = EvaluatorUniversityForm()
+    context = {
+        'title': title,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+@login_required(login_url='/login/')
+def editDeclaration(request, pk):
+    title = 'Actualizar declaración'
+    template = loader.get_template('new_declaration.html')
+    ins = get_object_or_404(EvaluatorUniversity, pk=pk)
+    if request.method == 'POST':
+        form = EvaluatorUniversityForm(request.POST, instance=ins)
+        if form.is_valid():
+            form.save()
+            url = 'evaluators:viewDeclaration'
+            return HttpResponseRedirect(reverse(url))
+        else:
+            error = 'La declaración esta duplicada'
+            contextError = {
+                'title': title,
+                'error': error,
+                'form': form,
+            }
+            return HttpResponse(template.render(contextError, request))            
+    else:
+        form = EvaluatorUniversityForm(instance=ins)
+    context = {
+        'title': title,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
 
 class ListInstitutional(ListView):
     model = TypesEvaluator

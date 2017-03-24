@@ -1,5 +1,5 @@
 from django import forms
-from .models import Evaluator, TypesEvaluator
+from .models import Evaluator, TypesEvaluator, EvaluatorUniversity
 from statuses.models import Status
 from django.db.models import Q
 
@@ -16,6 +16,11 @@ class EvaluatorForm(forms.ModelForm):
 class TypeEvaluatorForm(forms.ModelForm):
     class Meta:
         model = TypesEvaluator
+        fields = ('__all__')
+
+class EvaluatorUniversityForm(forms.ModelForm):
+    class Meta:
+        model = EvaluatorUniversity
         fields = ('__all__')
 
 MY_INSTITUTIONAL = (

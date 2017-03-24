@@ -6,6 +6,7 @@ from typeevaluators.models import TypeEvaluator
 from namecareers.models import NameCareer
 from statuses.models import Status
 from nationalities.models import Nationality
+from universities.models import University
 
 # Create your models here.
 
@@ -18,6 +19,7 @@ class Evaluator(models.Model):
     typesevaluators = models.ManyToManyField(TypeEvaluator, through='TypesEvaluator')
     fkstatus = models.ForeignKey(Status)
     fknationality = models.ForeignKey(Nationality, on_delete=models.CASCADE)
+    conflict = models.ManyToManyField(University, through='EvaluatorUniversity')
 
     def __str__(self):
         return "%s %s" %(self.firstname, self.lastname)
@@ -25,7 +27,11 @@ class Evaluator(models.Model):
     class Meta:
         verbose_name = 'Evaluator'
         verbose_name_plural = 'Evaluators'
-        ordering = ('id', )
+        ordering = ('ci', )
+
+    def _get_full_name(self):
+        return "%s %s" %(self.firstname, self.lastname)
+    fullname = property(_get_full_name)
 
 class TypesEvaluator(models.Model):
     fkevaluator = models.ForeignKey(Evaluator, on_delete=models.CASCADE)
@@ -40,4 +46,21 @@ class TypesEvaluator(models.Model):
         unique_together = ('fkevaluator', 'fktypeevaluator', 'fknamecareer')
         verbose_name = 'Type Evaluator'
         verbose_name_plural = 'Types Evaluators'
-        ordering = ('id',)
+        ordering = ('fknamecareer__description',)
+
+class EvaluatorUniversity(models.Model):
+    fkevaluator = models.ForeignKey(Evaluator, on_delete=models.CASCADE)
+    fkuniversity = models.ForeignKey(University, on_delete=models.CASCADE)
+    start_job = models.DateField(blank=False, null=False)
+    end_job = models.DateField(blank=False, null=False)
+    reason = models.TextField(blank=False, null=False)
+    doc = models.FileField(blank=True, upload_to='declarations/%Y_%m_%d/')
+
+    def __str__(self):
+        return "%s %s" %(self.fkevaluator, self.fkuniversity)
+
+    class Meta:
+        unique_together = ('fkevaluator', 'fkuniversity', 'start_job')
+        verbose_name = 'Evaluator / University'
+        verbose_name_plural = 'Evaluators / Universities'
+        ordering = ('fkuniversity__name', )
