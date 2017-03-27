@@ -38,6 +38,7 @@
                 <th>Institucional</th>
                 <th>Grado</th>
                 <th>Arcusur</th>
+                <th>Declaración</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Cedula</th>
@@ -52,6 +53,7 @@
                     <td> <a href="{% url 'evaluators:addType' 2 ev.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-italic" aria-hidden="true"></span></a></td>
                     <td> <a href="{% url 'evaluators:addType' 1 ev.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-education" aria-hidden="true"></span></a></td>
                     <td> <a href="{% url 'evaluators:addType' 3 ev.id %}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-education" aria-hidden="true"></span></a></td>
+                    <td> <a href="{% url 'evaluators:newDeclaration' ev.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></a></td>
                     <td> {{ ev.firstname }} </td>
                     <td> {{ ev.lastname }} </td>
                     <td> {{ ev.ci }} </td>

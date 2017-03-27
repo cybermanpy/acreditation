@@ -496,18 +496,54 @@ def viewDeclaration(request):
     return HttpResponse(template.render(context, request))
 
 
+# @login_required(login_url='/login/')
+# def newDeclaration(request):
+#     title = 'Agregar nueva declaracion'
+#     template = loader.get_template('new_declaration.html')
+#     if request.method == 'POST':
+#         form = EvaluatorUniversityForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             url = 'evaluators:viewDeclaration'
+#             return HttpResponseRedirect(reverse(url))
+#         else:
+#             error = 'La declaración esta duplicada'
+#             contextError = {
+#                 'title': title,
+#                 'error': error,
+#                 'form': form,
+#             }
+#             return HttpResponse(template.render(contextError, request))
+#     else:
+#         form = EvaluatorUniversityForm()
+#     context = {
+#         'title': title,
+#         'form': form,
+#     }
+#     return HttpResponse(template.render(context, request))
+
 @login_required(login_url='/login/')
-def newDeclaration(request):
+def newDeclaration(request, user):
     title = 'Agregar nueva declaracion'
     template = loader.get_template('new_declaration.html')
     if request.method == 'POST':
         form = EvaluatorUniversityForm(request.POST, request.FILES)
+        form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
         if form.is_valid():
             form.save()
             url = 'evaluators:viewDeclaration'
             return HttpResponseRedirect(reverse(url))
+        else:
+            error = 'La declaración esta duplicada'
+            contextError = {
+                'title': title,
+                'error': error,
+                'form': form,
+            }
+            return HttpResponse(template.render(contextError, request))
     else:
         form = EvaluatorUniversityForm()
+        form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
     context = {
         'title': title,
         'form': form,
@@ -532,7 +568,7 @@ def editDeclaration(request, pk):
                 'error': error,
                 'form': form,
             }
-            return HttpResponse(template.render(contextError, request))            
+            return HttpResponse(template.render(contextError, request))
     else:
         form = EvaluatorUniversityForm(instance=ins)
     context = {
