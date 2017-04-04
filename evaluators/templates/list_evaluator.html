@@ -28,6 +28,9 @@
         <a href="{% url 'evaluators:evaluator' %}" class="btn btn-primary">Limpiar</a>
     </form>
 
+    {% for item in user.user_profile.all %}
+    {% if item.number == 777 %}
+
     <table class="table table-condensed table-striped">
         <thead>
             <tr>
@@ -67,6 +70,38 @@
             {% endfor%}
         </tbody>
     </table>
+    {% else %}
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>Declaración</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Cedula</th>
+                <th>E-mail</th>
+                <th>Curriculum</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ev in listEvaluator %}
+                <tr>
+                    <td> <a href="{% url 'evaluators:newDeclaration' ev.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></a></td>
+                    <td> {{ ev.firstname }} </td>
+                    <td> {{ ev.lastname }} </td>
+                    <td> {{ ev.ci }} </td>
+                    <td> {{ ev.email }} </td>
+                    {% if ev.curriculum.url != "" %}
+                        <td> <a href="{{ ev.curriculum.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
+                    {% else %}
+                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></div></td>
+                    {% endif %}
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+    {% endif %}
+    {% endfor %}
+    
     <ul class="pagination pagination-sm"> 
         {% if listEvaluator.has_previous %}
             <li><a href="?page={{ listEvaluator.previous_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></a></li>

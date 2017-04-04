@@ -17,6 +17,6 @@ class AdminTypesEvaluator(admin.ModelAdmin):
 
 @admin.register(EvaluatorUniversity)
 class AdminEvaluatorUniversity(admin.ModelAdmin):
-    list_display = ('id', 'fkevaluator', 'fkuniversity', 'start_job', 'end_job', )
+    list_display = ('id', 'fkevaluator', 'fkuniversity', )
     search_fields = ('fkevaluator__firtname', )
     list_filter = ('fkuniversity', )

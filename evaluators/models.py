@@ -51,8 +51,6 @@ class TypesEvaluator(models.Model):
 class EvaluatorUniversity(models.Model):
     fkevaluator = models.ForeignKey(Evaluator, on_delete=models.CASCADE)
     fkuniversity = models.ForeignKey(University, on_delete=models.CASCADE)
-    start_job = models.DateField(blank=False, null=False)
-    end_job = models.DateField(blank=False, null=False)
     reason = models.TextField(blank=False, null=False)
     doc = models.FileField(blank=True, upload_to='declarations/%Y_%m_%d/')
 
@@ -60,7 +58,11 @@ class EvaluatorUniversity(models.Model):
         return "%s %s" %(self.fkevaluator, self.fkuniversity)
 
     class Meta:
-        unique_together = ('fkevaluator', 'fkuniversity', 'start_job')
+        unique_together = ('fkevaluator', 'fkuniversity')
         verbose_name = 'Evaluator / University'
         verbose_name_plural = 'Evaluators / Universities'
         ordering = ('fkuniversity__name', )
+
+# class EvaluatorCareer(models.Model):
+#     fkevaluator = models.ForeignKey(Evaluator, on_delete=models.CASCADE)
+#     

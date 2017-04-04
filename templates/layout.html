@@ -15,6 +15,9 @@
 				<h4> {% block header %}  {% endblock %} </h4>
 			</div>
 			{% if user.is_authenticated %}
+			{% for item in user.user_profile.all %}
+			{% if item.number == 777 %}
+
 			<nav class="navbar navbar-inverse" role="navigation">
 			  <!-- El logotipo y el icono que despliega el menú se agrupan
 			       para mostrarlos mejor en los dispositivos móviles -->
@@ -78,23 +81,72 @@
 			          Declaraciones <b class="caret"></b>
 			        </a>
 			        <ul class="dropdown-menu">
-			          <li><a href="{% url 'evaluators:viewDeclaration' %}">Listar</a></li>
+			          <li><a href="{% url 'evaluators:viewDeclaration' %}">Listar </a></li>
 			        </ul>
 			      </li>
 			    </ul>
-
 			    <ul class="nav navbar-nav navbar-right">
 			      <li class="dropdown">
 			        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 			          Logout <b class="caret"></b>
 			        </a>
 			        <ul class="dropdown-menu">
-			          <li><a href="{% url 'userprofiles:logout' %}">{{ user.username }}</a></li>
+			          <li><a href="{% url 'userprofiles:logout' %}">{{ user.username }} </a></li>
 			        </ul>
 			      </li>
 			    </ul>
 			  </div>
 			</nav>
+			{% else %}
+			<nav class="navbar navbar-inverse" role="navigation">
+			  <!-- El logotipo y el icono que despliega el menú se agrupan
+			       para mostrarlos mejor en los dispositivos móviles -->
+			  <div class="navbar-header">
+			    <button type="button" class="navbar-toggle" data-toggle="collapse"
+			            data-target=".navbar-ex1-collapse">
+			      <span class="sr-only">Desplegar navegación</span>
+			      <span class="icon-bar"></span>
+			      <span class="icon-bar"></span>
+			      <span class="icon-bar"></span>
+			    </button>
+			    <a class="navbar-brand" href="{% url 'userprofiles:dashboard' %}">Inicio</a>
+			  </div>
+			 
+			  <!-- Agrupar los enlaces de navegación, los formularios y cualquier
+			       otro elemento que se pueda ocultar al minimizar la barra -->
+			  <div class="collapse navbar-collapse navbar-ex1-collapse">
+			    <ul class="nav navbar-nav">
+			      <li class="dropdown">
+			        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			          Pares Evaluadores <b class="caret"></b>
+			        </a>
+			        <ul class="dropdown-menu">
+			          <li><a href="{% url 'evaluators:evaluator' %}">Todos</a></li>
+			        </ul>
+			      </li>
+			      <li class="dropdown">
+			        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			          Declaraciones <b class="caret"></b>
+			        </a>
+			        <ul class="dropdown-menu">
+			          <li><a href="{% url 'evaluators:viewDeclaration' %}">Listar </a></li>
+			        </ul>
+			      </li>
+			    </ul>
+			    <ul class="nav navbar-nav navbar-right">
+			      <li class="dropdown">
+			        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			          Logout <b class="caret"></b>
+			        </a>
+			        <ul class="dropdown-menu">
+			          <li><a href="{% url 'userprofiles:logout' %}">{{ user.username }} </a></li>
+			        </ul>
+			      </li>
+			    </ul>
+			  </div>
+			</nav>
+			{% endif %}
+			{% endfor %}
 			{% endif %}
 		</header>
 

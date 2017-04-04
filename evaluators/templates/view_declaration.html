@@ -42,7 +42,6 @@
                 <th>Edit</th>
                 <th>Nombre</th>
                 <th>Universidad</th>
-                <th>Fecha</th>
                 <th>Motivo</th>
             </tr>
         </thead>
@@ -52,7 +51,6 @@
                     <td> <a href="{% url 'evaluators:editDeclaration' de.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
                     <td> {{ de.fkevaluator.fullname }} </td>
                     <td> {{ de.fkuniversity.name }} </td>
-                    <td> {{ de.start_job }} </td>
                     <td> {{ de.reason }} </td>
                 </tr>
             {% endfor%}
