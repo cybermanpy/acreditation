@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'base.html' %}
 {% load widget_tweaks %}
 
 {% block title %}
@@ -33,44 +33,31 @@
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
-        <a href="{% url 'evaluators:viewDeclaration' %}" class="btn btn-primary">Limpiar</a>
+        <a href="{% url 'evaluators:searchDeclaration' %}" class="btn btn-primary">Limpiar</a>
     </form>
 
     <table class="table table-condensed table-striped">
         <thead>
             <tr>
-                <th>Edit</th>
                 <th>Nombre</th>
                 <th>Universidad</th>
                 <th>Motivo</th>
-                <th>Estado</th>
+                <th>Documento</th>
             </tr>
         </thead>
         <tbody>
             {% for de in listDeclaration %}
                 <tr>
-                    <td> <a href="{% url 'evaluators:editDeclaration' de.id %}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
                     <td> {{ de.fkevaluator.fullname }} </td>
                     <td> {{ de.fkuniversity.name }} </td>
                     <td> {{ de.reason }} </td>
-                    <td> {{ de.fkstatus.description }} </td>
+                    {% if de.doc.url != "" %}
+                        <td> <a href="{{ de.doc.url }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></a></td>
+                    {% else %}
+                        <td><div class="btn btn-info btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></div></td>
+                    {% endif %}
                 </tr>
             {% endfor%}
         </tbody>
     </table>
-    <ul class="pagination pagination-sm"> 
-        {% if listDeclaration.has_previous %}
-            <li><a href="?page={{ listDeclaration.previous_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></a></li>
-        {% endif %}
-        {% for pg in listDeclaration.paginator.page_range %}
-            {% if listDeclaration.number == pg %}
-                <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
-            {% else %}
-                <li><a href="?page={{ pg }}">{{pg}}</a></li>
-            {% endif %}
-        {% endfor %}
-        {% if listDeclaration.has_next %}
-            <li><a href="?page={{ listDeclaration.next_page_number }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a></li>
-        {% endif %}
-    </ul>
 {% endblock %}

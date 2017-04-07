@@ -3,6 +3,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from .models import TypesEvaluator, Evaluator, EvaluatorUniversity
+from statuses.models import Status
 from typeevaluators.models import TypeEvaluator
 from namecareers.models import NameCareer
 from django.views.generic import ListView
@@ -14,6 +15,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db import IntegrityError
+from django.db.models import Q
 
 @login_required(login_url='/login/')
 def viewEvaluatorInstitutional(request):
@@ -496,6 +498,39 @@ def viewDeclaration(request):
     return HttpResponse(template.render(context, request))
 
 
+def searchDeclaration(request):
+    title = 'Declaraciones'
+    template = loader.get_template('list_declaration.html')
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearchIns(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                listDeclaration = EvaluatorUniversity.objects.filter(fkevaluator__fkstatus__description='Activo', fkevaluator__firstname__icontains=search, fkstatus__description='Activo')
+            elif options == '2':
+                listDeclaration = EvaluatorUniversity.objects.filter(fkevaluator__fkstatus__description='Activo', fkevaluator__lastname__icontains=search, fkstatus__description='Activo')
+            context = {
+                'title': title,
+                'listDeclaration': listDeclaration,
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearchIns()
+    listDeclaration = EvaluatorUniversity.objects.filter(fkevaluator__fkstatus__description='Activo', fkstatus__description='Activo')
+    context = {
+        'title': title,
+        'listDeclaration': listDeclaration,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+
 # @login_required(login_url='/login/')
 # def newDeclaration(request):
 #     title = 'Agregar nueva declaracion'
@@ -529,6 +564,7 @@ def newDeclaration(request, user):
     if request.method == 'POST':
         form = EvaluatorUniversityForm(request.POST, request.FILES)
         form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+        form.fields['fkstatus'].queryset = Status.objects.filter(Q(description='Activo') | Q(description='Inactivo'))
         if form.is_valid():
             form.save()
             url = 'evaluators:viewDeclaration'
@@ -544,6 +580,7 @@ def newDeclaration(request, user):
     else:
         form = EvaluatorUniversityForm()
         form.fields['fkevaluator'].queryset = Evaluator.objects.filter(id=user)
+        form.fields['fkstatus'].queryset = Status.objects.filter(Q(description='Activo') | Q(description='Inactivo'))
     context = {
         'title': title,
         'form': form,
@@ -556,7 +593,8 @@ def editDeclaration(request, pk):
     template = loader.get_template('new_declaration.html')
     ins = get_object_or_404(EvaluatorUniversity, pk=pk)
     if request.method == 'POST':
-        form = EvaluatorUniversityForm(request.POST, instance=ins)
+        form = EvaluatorUniversityForm(request.POST, request.FILES, instance=ins)
+        form.fields['fkstatus'].queryset = Status.objects.filter(Q(description='Activo') | Q(description='Inactivo'))
         if form.is_valid():
             form.save()
             url = 'evaluators:viewDeclaration'
@@ -571,6 +609,7 @@ def editDeclaration(request, pk):
             return HttpResponse(template.render(contextError, request))
     else:
         form = EvaluatorUniversityForm(instance=ins)
+        form.fields['fkstatus'].queryset = Status.objects.filter(Q(description='Activo') | Q(description='Inactivo'))
     context = {
         'title': title,
         'form': form,

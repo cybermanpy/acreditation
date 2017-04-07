@@ -5,4 +5,4 @@ from .models import Status
 
 @admin.register(Status)
 class AdminStatus(admin.ModelAdmin):
-    list_display = ('description',)
+    list_display = ('id', 'description',)

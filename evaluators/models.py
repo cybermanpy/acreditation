@@ -17,7 +17,7 @@ class Evaluator(models.Model):
     email = models.EmailField(max_length=140, blank=False, null=False, unique=True)
     curriculum = models.FileField(blank=True, upload_to='curriculums/%Y_%m_%d/')
     typesevaluators = models.ManyToManyField(TypeEvaluator, through='TypesEvaluator')
-    fkstatus = models.ForeignKey(Status)
+    fkstatus = models.ForeignKey(Status, on_delete=models.CASCADE)
     fknationality = models.ForeignKey(Nationality, on_delete=models.CASCADE)
     conflict = models.ManyToManyField(University, through='EvaluatorUniversity')
 
@@ -53,6 +53,7 @@ class EvaluatorUniversity(models.Model):
     fkuniversity = models.ForeignKey(University, on_delete=models.CASCADE)
     reason = models.TextField(blank=False, null=False)
     doc = models.FileField(blank=True, upload_to='declarations/%Y_%m_%d/')
+    fkstatus = models.ForeignKey(Status, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s %s" %(self.fkevaluator, self.fkuniversity)
