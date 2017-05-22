@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'^dashboard/evaluator/list/view/$', views.EvaluatorList.as_view(), name='list'),
     url(r'^dashboard/evaluator/add/type/(?P<label>[0-9]+)/(?P<user>[0-9]+)$', views.newEvaluatorInstitutional, name='addType'),
     # url(r'^dashboard/evaluator/list/institutional/$', views.ListInstitutional.as_view(), name='listInstitutional'),
+    url(r'^acreditation/api/v2/$', views.evaluatorJson, name='evaluatorJson'),
+    url(r'^acreditation/api/v3/$', views.anyView, name='anyView'),
     url(r'^dashboard/evaluator/list/agronomia/$', views.ListAgronomia.as_view(), name='listAgronomia'),
     url(r'^dashboard/evaluator/(?P<pk>[0-9]+)/$', views.EvaluatorDetail.as_view(), name='EvaluatorDetail'),
 ]

@@ -19,6 +19,7 @@ def authentication(request):
         if form.is_valid:
             user = request.POST['username']
             passwd = request.POST['password']
+            request.session['user_s'] = user
             access = authenticate(username=user, password=passwd)
             if access is not None:
                 if access.is_active:

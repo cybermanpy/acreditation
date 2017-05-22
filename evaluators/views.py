@@ -16,6 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db import IntegrityError
 from django.db.models import Q
+import json
 
 @login_required(login_url='/login/')
 def viewEvaluatorInstitutional(request):
@@ -616,6 +617,12 @@ def editDeclaration(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
+
+def evaluatorJson(request):
+    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
+    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
+
 class ListInstitutional(ListView):
     model = TypesEvaluator
     title = 'Pares Institucionales'
@@ -637,3 +644,30 @@ class EvaluatorDetail(DetailView):
     model = Evaluator
 
 # template_name = 'loggedin_load/live_bids.html'
+
+def json_response(func):
+    """
+    A decorator thats takes a view response and turns it
+    into json. If a callback is added through GET or POST
+    the response is JSONP.
+    """
+    def decorator(request, *args, **kwargs):
+        objects = func(request, *args, **kwargs)
+        if isinstance(objects, HttpResponse):
+            return objects
+        try:
+            data = simplejson.dumps(objects)
+            if 'callback' in request.REQUEST:
+                # a jsonp response!
+                data = '%s(%s);' % (request.REQUEST['callback'], data)
+                return HttpResponse(data, "text/javascript")
+        except:
+            data = simplejson.dumps(str(objects))
+        return HttpResponse(data, "application/json")
+    return decorator
+
+@json_response
+def anyView(request):
+    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
+    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
