@@ -618,7 +618,7 @@ def editDeclaration(request, pk):
     return HttpResponse(template.render(context, request))
 
 
-def evaluatorJson(request):
+def apiJson2(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
     data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
@@ -667,7 +667,7 @@ def json_response(func):
     return decorator
 
 @json_response
-def anyView(request):
+def apiJson3(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
     data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
