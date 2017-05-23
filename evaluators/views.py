@@ -666,11 +666,11 @@ def json_response(func):
         return HttpResponse(data, "application/json")
     return decorator
 
-
+@json_response
 def apiJson3(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
     data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
-    data = {'callback': list(data)}
+    # data = {'callback': list(data)}
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
 
 # @json_response
@@ -685,6 +685,19 @@ def apiJson4(request):
     return HttpResponse("%s(%s);" % (jsonpCallback, json.dumps(data, ensure_ascii=False, encoding="utf-8")), content_type='text/javascript')
     # return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
 
+def getTemplate(request):
+    template = loader.get_template('form_jsonp.html')
+    title = 'JSONP'
+    context = {
+        'title': title,
+    }
+    return HttpResponse(template.render(context, request))
+
+@json_response
+def getParam(request):
+    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
+    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
 
 # try:
 #     import simplejson as json

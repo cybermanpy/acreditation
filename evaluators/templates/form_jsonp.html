@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block javascript %}
+
+<!--<script type="text/javascript" src="http://acreditation.aneaes.gov.py/acreditation/api/v2/?callback=parseJSON"></script>-->
+
+<script>
+
+    $(document).ready(function () {
+      $.getJSON("{% url 'evaluators:getParam' %}", function(json){ 
+          console.log(json);
+          text  = 'callback';
+          $('body').html(text+"("+JSON.stringify(json)+")");
+      });
+    });
+    // function loadScript (id, src, callback) {
+
+    //    // Crear elemento
+    //    var script = document.createElement("script");
+
+    //    // Atributos del script
+    //    script.setAttribute("type", "text/javascript");
+    //    script.setAttribute("src", src + "?callback=" + callback);
+    //    script.setAttribute("id", id);
+
+    //    // Insertar script en la cabecera
+    //    document.getElementsByTagName("result")[0].appendChild(script);
+    // }
+    // $(document).ready(function () {
+    //   $.ajax({
+    //     url: "{% url 'evaluators:getParam' %}",
+    //     dataType: "json",
+    //     success: function (data) {
+    //         $.getJSON("{% url 'evaluators:getParam' %}", function( data ) {
+    //           console.log(data);
+    //           $("<pre>").text(JSON.stringify(data)).appendTo("body");
+    //         });
+    //         }
+    //   });
+    // });
+
+    // $("#id_text").change(function () {
+    //   console.log( $(this).val() );
+    // });
+    
+    // $("#id_text").change(function () {
+    //   var text = $(this).val();
+    //   $.ajax({
+    //     url: "{% url 'evaluators:getParam' %}",
+    //     data: {
+    //       'text': text,
+    //     },
+    //     dataType: 'json',
+    //     success: function (data) {
+    //         $.getJSON("{% url 'evaluators:getParam' %}", function( data ) {
+    //           console.log(data);
+    //         });
+    //         }
+    //   });
+    // });
+  // $( document ).ready(function() {
+  //   $.ajax({
+  //       url: "{% url 'evaluators:getParam' %}",
+  //       data: {
+  //         query: "getParam"
+  //       },
+  //       type: "GET",
+  //       dataType: "jsonp",
+  //       success: function(data){
+  //         console.log("Recibes: ", data);
+  //         $("<pre>").text(JSON.stringify(data)).appendTo("body");
+  //       }
+  //     });
+  // });
+</script>
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
