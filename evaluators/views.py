@@ -666,8 +666,59 @@ def json_response(func):
         return HttpResponse(data, "application/json")
     return decorator
 
-@json_response
+
 def apiJson3(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
     data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    data = {'callback': list(data)}
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
+
+# @json_response
+# def apiJson4(request):
+#     return [mm.to_json_dict() for mm in  Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')]
+
+
+def apiJson4(request):
+    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
+    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    jsonpCallback = 'callback'
+    return HttpResponse("%s(%s);" % (jsonpCallback, json.dumps(data, ensure_ascii=False, encoding="utf-8")), content_type='text/javascript')
+    # return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
+
+
+# try:
+#     import simplejson as json
+# except ImportError:
+#     import json
+
+# from django.views import generic
+# from django.http import HttpResponse
+
+# class JsonView(generic.View):
+#     """
+#     Generic view for returning JSON data. 
+#     Supports JSONP through the query variable `callback` (used by jQuery)
+    
+#     Usage:
+#       Override get_json_data to return the data that is to be encoded
+#     or:
+#       JsonView.as_view(json_data={"foo": "bar"})
+#     """
+#     json_data = {}
+    
+#     def get_json_data(self, request, *args, **kwargs):
+#         """
+#         Should return the data that is to be JSON encoded and sent to the client
+#         """
+#         return self.json_data
+    
+#     def get(self, request, *args, **kwargs):
+#         data = self.get_json_data(request, *args, **kwargs)
+#         jsonp_callback = request.GET.get("callback")
+#         if jsonp_callback:
+#             response = HttpResponse("%s(%s);" % (jsonp_callback, json.dumps(data)))
+#             response["Content-type"] = "text/javascript; charset=utf-8"
+#         else:
+#             response = HttpResponse(json.dumps(data))
+#             response["Content-type"] = "application/json; charset=utf-8"
+#         return response

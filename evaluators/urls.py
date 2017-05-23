@@ -23,6 +23,7 @@ urlpatterns = [
     # url(r'^dashboard/evaluator/list/institutional/$', views.ListInstitutional.as_view(), name='listInstitutional'),
     url(r'^acreditation/api/v2/$', views.apiJson2, name='apiJson2'),
     url(r'^acreditation/api/v3/$', views.apiJson3, name='apiJson3'),
+    url(r'^acreditation/api/v4/$', views.apiJson3, name='apiJson4'),
     url(r'^dashboard/evaluator/list/agronomia/$', views.ListAgronomia.as_view(), name='listAgronomia'),
     url(r'^dashboard/evaluator/(?P<pk>[0-9]+)/$', views.EvaluatorDetail.as_view(), name='EvaluatorDetail'),
 ]
