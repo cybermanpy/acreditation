@@ -27,12 +27,15 @@
         </div>
         <button type="submit" class="btn btn-primary">Buscar</button>
         {% if label == 'institutional' %}
+            <a href="{% url 'evaluators:pdfEvaluator' %}" class="btn btn-primary">Generar pdf</a>
             <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
         {% if label == 'degree' %}
+            <a href="{% url 'evaluators:pdfEvaluator' %}" class="btn btn-primary">Generar pdf</a>
             <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
         {% if label == 'arcusur' %}
+            <a href="{% url 'evaluators:pdfEvaluator' %}" class="btn btn-primary">Generar pdf</a>
             <a href="{% url 'evaluators:cleanner' label %}" class="btn btn-primary">Limpiar</a>
         {% endif %}
     </form>

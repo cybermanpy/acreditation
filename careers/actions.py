@@ -51,31 +51,51 @@ def export_xls(modeladmin, request, queryset):
 export_xls.short_description = u"Export XLS"
 
 
+# def export_csv(modeladmin, request, queryset):
+#     response = HttpResponse(content_type='text/csv')
+#     response['Content-Disposition'] = 'attachment; filename=careers.csv'
+#     writer = csv.writer(response, csv.excel)
+#     response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+#     writer.writerow([
+#         smart_str(u"Carrera"),
+#         smart_str(u"Universidad"),
+#         smart_str(u"Facultad"),
+#         smart_str(u"Sede"),
+#         smart_str(u"Departamento"),
+#         smart_str(u"Fecha Inicio"),
+#         smart_str(u"Fecha Finalización"),
+#         smart_str(u"Tipo de Universidad"),
+#     ])
+#     for obj in queryset:
+#         writer.writerow([
+#             smart_str(obj.fknamecareer),
+#             smart_str(obj.fkfaculty.fkuniversity.name),
+#             smart_str(obj.fkfaculty.fkname.name),
+#             smart_str(obj.fkfaculty.fkcampus.name),
+#             smart_str(obj.fkfaculty.fkcampus.fkdepartment.name),
+#             smart_str(obj.fkresolution.start_date),
+#             smart_str(obj.fkresolution.end_date),
+#             smart_str(obj.fkfaculty.fkuniversity.fktypeuniversity.description),
+#         ])
+#     return response
+# export_csv.short_description = u"Export CSV"
+
+
 def export_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=careers.csv'
     writer = csv.writer(response, csv.excel)
     response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
     writer.writerow([
-        smart_str(u"Carrera"),
-        smart_str(u"Universidad"),
-        smart_str(u"Facultad"),
-        smart_str(u"Sede"),
-        smart_str(u"Departamento"),
-        smart_str(u"Fecha Inicio"),
-        smart_str(u"Fecha Finalización"),
-        smart_str(u"Tipo de Universidad"),
+        smart_str(u"id"),
+        smart_str(u"nombre"),
+        smart_str(u"id_facultad"),
     ])
     for obj in queryset:
         writer.writerow([
-            smart_str(obj.fknamecareer),
-            smart_str(obj.fkfaculty.fkuniversity.name),
-            smart_str(obj.fkfaculty.fkname.name),
-            smart_str(obj.fkfaculty.fkcampus.name),
-            smart_str(obj.fkfaculty.fkcampus.fkdepartment.name),
-            smart_str(obj.fkresolution.start_date),
-            smart_str(obj.fkresolution.end_date),
-            smart_str(obj.fkfaculty.fkuniversity.fktypeuniversity.description),
+            smart_str(obj.id),
+            smart_str(obj.fknamecareer.description),
+            smart_str(obj.fkfaculty.id),
         ])
     return response
 export_csv.short_description = u"Export CSV"

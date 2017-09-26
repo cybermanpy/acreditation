@@ -1,12 +1,13 @@
 from django.contrib import admin
 from .models import Evaluator, TypesEvaluator, EvaluatorUniversity
-from actions import export_xls, export_csv, export_xlsx
+from .actions import export_xls, export_csv, export_xlsx, export2_xlsx
 
 @admin.register(Evaluator)
 class AdminEvaluator(admin.ModelAdmin):
     list_display = ('id', 'firstname', 'lastname', 'fkstatus', 'ci', )
     search_fields = ('firstname',)
     list_filter = ('fkstatus',)
+    actions = [export2_xlsx,]
 
 @admin.register(TypesEvaluator)
 class AdminTypesEvaluator(admin.ModelAdmin):

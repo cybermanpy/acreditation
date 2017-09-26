@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^acreditation/postponed/$', views.viewPostponed, name='postponed'),
     url(r'^acreditation/no-reputable/$', views.viewNoReputable, name='noreputable'),
     url(r'^acreditation/history/$', views.viewHistory, name='history'),
+    url(r'^acreditation/history/arcusur/$', views.viewHistoryArcusur, name='historyArcusur'),
     url(r'^acreditation/pdfnational/$', views.pdfNational, name='pdfNational'),
     url(r'^acreditation/pdfarcusur/$', views.pdfArcusur, name='pdfArcusur'),
     url(r'^acreditation/pdfpostponed/$', views.pdfPostponed, name='pdfPostponed'),

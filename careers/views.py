@@ -352,6 +352,60 @@ def viewArcusur(request):
     }
     return HttpResponse(template.render(context, request))
 
+def viewHistoryArcusur(request):    
+    title = 'Carreras de grado acreditados - Modelo Arcusur'
+    template = loader.get_template('view_careers.html')
+    label = 'arcusur'
+    request.session['s_text'] = ''
+    request.session['s_options'] = ''
+    if request.method == 'POST':
+        form = FormSearch(request.POST)
+        if form.is_valid():
+            search = request.POST['text']
+            options = request.POST['options']
+            request.session['s_text'] = search
+            request.session['s_options'] = options
+            if options == '1':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fknamecareer__description__icontains=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            elif options == '2':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__name__icontains=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            elif options == '3':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkname__name__icontains=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            elif options == '4':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__name__icontains=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            elif options == '5':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkcampus__fkdepartment__name__icontains=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            elif options == '6':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkresolution__start_date__year=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            elif options == '7':
+                careers = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), fkfaculty__fkuniversity__fktypeuniversity__description__icontains=search, arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+            context = {
+                'careers': careers,
+                'title': title,
+                'form': form,
+                'label': label,
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        form = FormSearch()
+    listCareer = Career.objects.filter(Q(fkstatus__description='Acreditada') | Q(fkstatus__description='Vencida'), arcusur=True, posgrado=False).order_by('fkresolution__start_date')
+    paginator = Paginator(listCareer, 10)
+    try:
+       page = int(request.GET.get('page', '1'))
+    except ValueError:
+       page = 1
+    try:
+       careers = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+       careers = paginator.page(paginator.num_pages)
+    context = {
+        'careers': careers,
+        'title': title,
+        'form': form,
+        'label': label,
+    }
+    return HttpResponse(template.render(context, request))
+
 def cleanner(request, link):
     request.session['s_text'] = ''
     request.session['s_options'] = ''
@@ -373,7 +427,6 @@ def cleanner(request, link):
     elif link == 'history':
         url = 'careers:history'
         return redirect(reverse(url))
-    
 
 def pdfNational(request):
     search = request.session['s_text']

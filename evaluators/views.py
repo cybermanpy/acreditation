@@ -17,6 +17,16 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db import IntegrityError
 from django.db.models import Q
 import json
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, inch, landscape, portrait, cm, A4
+import urllib
+import StringIO
+import PIL.Image
 
 @login_required(login_url='/login/')
 def viewEvaluatorInstitutional(request):
@@ -617,12 +627,6 @@ def editDeclaration(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
-
-def apiJson2(request):
-    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
-    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
-    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
-
 class ListInstitutional(ListView):
     model = TypesEvaluator
     title = 'Pares Institucionales'
@@ -667,16 +671,22 @@ def json_response(func):
     return decorator
 
 @json_response
+def apiJson2(request):
+    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
+    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
+
+@json_response
+def apiJson5(request):
+    object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
+    data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
+    return data
+
+@json_response
 def apiJson3(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
     data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
-    # data = {'callback': list(data)}
     return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
-
-# @json_response
-# def apiJson4(request):
-#     return [mm.to_json_dict() for mm in  Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')]
-
 
 def apiJson4(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
@@ -697,7 +707,7 @@ def getTemplate(request):
 def getParam(request):
     object_list = Evaluator.objects.filter(fkstatus__description='Activo').order_by('ci')
     data = [{'etiqueta': 'Nombre y Apellido', 'valor': item.fullname} for item in object_list ]
-    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='application/json')
+    return HttpResponse(json.dumps(data, ensure_ascii=False, encoding="utf-8"), content_type='text/javascript')
 
 # try:
 #     import simplejson as json
@@ -735,3 +745,79 @@ def getParam(request):
 #             response = HttpResponse(json.dumps(data))
 #             response["Content-type"] = "application/json; charset=utf-8"
 #         return response
+
+def pdfEvaluator(request):
+    search = request.session['s_text']
+    options = request.session['s_options']
+    response = HttpResponse(content_type='aplication/pdf')
+    response['Content-Disposition'] = 'attachment; filename="evaluator.pdf"'
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+        pagesize=landscape(letter))
+    # Our container for 'Flowable' objects
+    elements = []
+    logo = "/var/www/html/acreditation/static/img/logoBlack.png"
+    im = Image(logo, 9*inch, 2*inch)
+
+    # A large collection of style sheets pre-made for us
+    styles = getSampleStyleSheet()
+    title = styles['Heading1']
+    title.alignment=TA_CENTER
+    thead = styles["Normal"]
+    thead.alignment=TA_CENTER
+    tbody = styles["BodyText"]
+    tbody.alignment=TA_LEFT
+    styles.wordWrap = 'CJK'
+    styles.add(ParagraphStyle(name='RightAlign', alignment=TA_JUSTIFY))
+    elements.append(im)
+
+    if options == '':
+        typesEvaluatorList = TypesEvaluator.objects.filter(fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    elif options == '1':
+        typesEvaluatorList = TypesEvaluator.objects.filter(fkevaluator__firstname__icontains=search, fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    elif options == '2':
+        typesEvaluatorList = TypesEvaluator.objects.filter(fknamecareer__lastname__icontains=search, fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+    elif options == '3':
+        typesEvaluatorList = TypesEvaluator.objects.filter(fknamecareer__description__icontains=search, fktypeevaluator__description__icontains='Carreras de Grado', fkevaluator__fkstatus__description='Activo')
+
+    elements.append(Paragraph('Pares Evaluadores - Carreras de Grado', title))
+
+    # Need a place to store our table rows
+    table_data = []
+    table_data.append([
+        Paragraph(str('Nro.'), thead),
+        Paragraph(str('Nombre'), thead),
+        Paragraph(str('Apellido'), thead),
+        Paragraph(str('Carrera'), thead),
+        ])
+    for i, c in enumerate(typesEvaluatorList):
+        # Add a row to the table
+        i=i+1
+        table_data.append([
+            Paragraph(str(i), tbody),
+            Paragraph(str(c.fkevaluator.firstname), tbody),
+            Paragraph(str(c.fkevaluator.lastname), tbody),
+            Paragraph(str(c.fknamecareer.description), tbody),
+            ])
+    
+    # Create the table
+    career_table = Table(table_data, colWidths=[doc.width/4.0]*4)
+
+    career_table.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    elements.append(career_table)
+    doc.build(elements)
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    response.write(buff.getvalue())
+    buff.close()
+    return response

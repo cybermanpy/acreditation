@@ -9,16 +9,39 @@
 {% block javascript %}
 
 <!--<script type="text/javascript" src="http://acreditation.aneaes.gov.py/acreditation/api/v2/?callback=parseJSON"></script>-->
+<script>
+   function logResults(json){
+    console.log(json);
+  }
+
+  $.ajax({
+    url: "https://acreditation.aneaes.gov.py/acreditation/api/v5",
+    dataType: "jsonp",
+    jsonpCallback: "logResults"
+  });
+</script>
+
+<script>
+    // $(document).ready(function () {
+    //   $.getJSON("{% url 'evaluators:getParam' %}", function(json){ 
+    //       console.log(json);
+    //       text  = 'callback';
+    //       $('body').html(text+"("+JSON.stringify(json)+")");
+    //   });
+    // });
+</script>
+
+
 
 <script>
 
-    $(document).ready(function () {
-      $.getJSON("{% url 'evaluators:getParam' %}", function(json){ 
-          console.log(json);
-          text  = 'callback';
-          $('body').html(text+"("+JSON.stringify(json)+")");
-      });
-    });
+    // $(document).ready(function () {
+    //   $.getJSON("{% url 'evaluators:getParam' %}", function(json){ 
+    //       console.log(json);
+    //       text  = 'callback';
+    //       $('body').html(text+"("+JSON.stringify(json)+")");
+    //   });
+    // });
     // function loadScript (id, src, callback) {
 
     //    // Crear elemento
